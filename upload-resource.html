@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Twinkle — Upload Resource</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#5B5BDB;--secondary:#8A8FE8;--accent:#C7C2F0;
+  --surface:#F5F4FF;--surface-2:#EDE9FE;--white:#FFFFFF;
+  --text-1:#1A1A2E;--text-2:#374151;--text-3:#6B7280;--text-4:#9CA3AF;
+  --success:#22C55E;--warning:#F59E0B;--error:#EF4444;--border:#E5E7EB;--bg:#F7F6FF;
+  --gradient:linear-gradient(135deg,#5B5BDB 0%,#8A8FE8 100%);
+  --radius-md:14px;--radius-lg:20px;--radius-xl:24px;--radius-full:100px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow:hidden;}
+.app{width:100%;max-width:480px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ── HEADER ── */
+.header{flex-shrink:0;background:var(--white);border-bottom:1px solid #F3F4F6;padding-top:env(safe-area-inset-top,0px);}
+.header-inner{height:56px;display:flex;align-items:center;padding:0 12px;gap:8px;}
+.close-btn{width:40px;height:40px;border-radius:12px;background:none;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-1);transition:background 0.18s;flex-shrink:0;}
+.close-btn:active{background:var(--surface-2);}
+.close-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.header-title{font-family:'Sora',sans-serif;font-size:17px;font-weight:600;color:var(--text-1);flex:1;text-align:center;}
+.pub-btn{padding:0 16px;height:36px;border-radius:var(--radius-full);background:var(--gradient);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:white;box-shadow:0 3px 12px rgba(91,91,219,0.28);transition:opacity 0.2s,transform 0.18s;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.pub-btn:disabled{background:var(--border);color:var(--text-4);box-shadow:none;cursor:not-allowed;}
+.pub-btn:not(:disabled):active{transform:scale(0.96);}
+.pub-btn.loading{opacity:0.7;pointer-events:none;}
+.pub-btn svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── TABS ── */
+.tab-selector{flex-shrink:0;padding:10px 16px;background:var(--white);border-bottom:1px solid #F3F4F6;}
+.tab-inner{background:var(--surface-2);border-radius:12px;padding:4px;display:flex;gap:2px;}
+.tab-btn{flex:1;height:36px;border-radius:9px;border:none;background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--text-3);transition:all 0.22s cubic-bezier(0.34,1.2,0.64,1);}
+.tab-btn.active{background:var(--white);color:var(--primary);font-weight:600;box-shadow:0 2px 8px rgba(91,91,219,0.12);}
+
+/* ── SCROLL ── */
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 24px;}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* ── SECTION CARD ── */
+.s-card{margin:14px 16px 0;background:var(--white);border-radius:var(--radius-xl);padding:18px;border:1px solid #F0EFFE;box-shadow:0 2px 12px rgba(91,91,219,0.06);}
+.s-card-label{font-family:'Sora',sans-serif;font-size:12px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.s-card-label svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── THUMBNAIL UPLOAD ── */
+.thumb-box{
+  width:100%;aspect-ratio:16/9;
+  border:2px dashed var(--accent);border-radius:14px;
+  background:var(--surface);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;cursor:pointer;position:relative;overflow:hidden;
+  transition:border-color 0.2s,background 0.2s;
+}
+.thumb-box:active{border-color:var(--primary);background:var(--surface-2);}
+.thumb-box svg{width:32px;height:32px;stroke:var(--secondary);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.thumb-box p{font-size:14px;color:var(--text-3);font-weight:500;}
+.thumb-box .thumb-hint{font-size:11px;color:var(--text-4);}
+.thumb-preview{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none;border-radius:12px;}
+.thumb-remove{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.5);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;}
+.thumb-remove.show{display:flex;}
+.thumb-remove svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Unlock banner */
+.unlock-banner{
+  display:none;margin-top:10px;padding:10px 14px;
+  background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;
+  align-items:center;gap:8px;font-size:13px;color:#16A34A;font-weight:500;
+}
+.unlock-banner.show{display:flex;}
+.unlock-banner svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* No-thumb banner */
+.no-thumb-banner{
+  display:none;margin-top:10px;padding:10px 14px;
+  background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;
+  align-items:center;gap:8px;font-size:13px;color:#92400E;font-weight:500;
+}
+.no-thumb-banner.show{display:flex;}
+.no-thumb-banner svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* ── FIELDS ── */
+.field-group{display:flex;flex-direction:column;gap:12px;}
+.field-label{font-size:13px;font-weight:500;color:var(--text-2);margin-bottom:-6px;}
+.req{color:var(--error);font-size:11px;}
+.field-input{
+  width:100%;height:50px;background:#FAFAFA;border:1.5px solid var(--border);
+  border-radius:var(--radius-md);padding:0 14px;
+  font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text-1);
+  outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none;
+}
+.field-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,91,219,0.09);}
+.field-input::placeholder{color:var(--text-4);font-size:14px;}
+.field-input.error{border-color:var(--error);}
+
+.field-select{
+  width:100%;height:50px;background:#FAFAFA;border:1.5px solid var(--border);
+  border-radius:var(--radius-md);padding:0 36px 0 14px;
+  font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text-1);
+  outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;
+  transition:border-color 0.2s,box-shadow 0.2s;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;background-size:16px;
+}
+.field-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,91,219,0.09);}
+
+/* ── DRIVE LINK ── */
+.drive-wrap{position:relative;display:flex;align-items:center;}
+.drive-icon{position:absolute;left:14px;width:17px;height:17px;stroke:var(--secondary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;}
+.drive-icon svg{width:17px;height:17px;}
+.drive-input{
+  width:100%;height:50px;background:#FAFAFA;border:1.5px solid var(--border);
+  border-radius:var(--radius-md);padding:0 14px 0 42px;
+  font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text-1);
+  outline:none;transition:border-color 0.2s,box-shadow 0.2s;
+}
+.drive-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,91,219,0.09);}
+.drive-input::placeholder{color:var(--text-4);font-size:13px;}
+
+/* Drive preview chip */
+.drive-chip{
+  display:none;align-items:center;gap:8px;
+  background:var(--surface-2);border-radius:var(--radius-full);
+  padding:6px 12px;width:fit-content;
+}
+.drive-chip.show{display:flex;}
+.drive-chip svg{width:14px;height:14px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.drive-chip span{font-size:13px;color:var(--primary);font-weight:500;}
+
+/* ── TEXT EDITOR ── */
+.editor-toolbar{
+  display:flex;gap:4px;padding:8px;
+  background:var(--surface);border-radius:10px 10px 0 0;
+  border:1.5px solid var(--border);border-bottom:none;
+}
+.fmt-btn{
+  width:34px;height:34px;border-radius:8px;border:none;background:none;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  transition:background 0.18s,color 0.18s;
+}
+.fmt-btn:active{background:var(--surface-2);color:var(--primary);}
+.fmt-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.fmt-divider{width:1px;background:var(--border);margin:4px 2px;}
+
+.text-editor{
+  width:100%;min-height:220px;background:#FAFAFA;
+  border:1.5px solid var(--border);border-radius:0 0 10px 10px;
+  border-top:none;padding:14px;
+  font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text-1);
+  line-height:1.7;outline:none;resize:none;
+}
+.text-editor:focus{background:var(--white);}
+.text-editor::placeholder{color:var(--text-4);}
+.text-editor:empty::before{content:attr(data-placeholder);color:var(--text-4);pointer-events:none;}
+
+/* ── TARGETING CARD ── */
+.target-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;user-select:none;
+}
+.target-toggle h4{font-family:'Sora',sans-serif;font-size:15px;font-weight:600;color:var(--text-1);}
+.target-toggle p{font-size:13px;color:var(--text-3);}
+.target-toggle-icon{
+  width:32px;height:32px;border-radius:50%;background:var(--surface-2);
+  display:flex;align-items:center;justify-content:center;transition:transform 0.25s;flex-shrink:0;
+}
+.target-toggle-icon.open{transform:rotate(180deg);}
+.target-toggle-icon svg{width:16px;height:16px;stroke:var(--primary);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.target-body{display:none;margin-top:14px;display:flex;flex-direction:column;gap:12px;}
+.target-note{
+  background:var(--surface-2);border-radius:10px;padding:10px 14px;
+  font-size:12px;color:var(--primary);line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.target-note svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px;}
+
+/* Class chips */
+.chips-row{display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 0 4px;scrollbar-width:none;}
+.chips-row::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;height:34px;padding:0 14px;border-radius:var(--radius-full);border:1.5px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text-1);cursor:pointer;white-space:nowrap;display:flex;align-items:center;transition:all 0.2s cubic-bezier(0.34,1.2,0.64,1);user-select:none;}
+.chip.active{background:var(--primary);border-color:var(--primary);color:white;box-shadow:0 2px 10px rgba(91,91,219,0.25);}
+.chip:active{transform:scale(0.96);}
+
+/* ── PUBLISH BTN (in scroll) ── */
+.pub-wrap{margin:16px 16px 0;}
+.btn-publish{
+  width:100%;height:56px;border:none;border-radius:var(--radius-md);
+  background:var(--gradient);color:white;
+  font-family:'Sora',sans-serif;font-size:16px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 18px rgba(91,91,219,0.30);
+  transition:transform 0.18s,box-shadow 0.18s,opacity 0.2s;
+  position:relative;overflow:hidden;
+}
+.btn-publish::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.14) 0%,transparent 55%);}
+.btn-publish:active:not(:disabled){transform:scale(0.97);}
+.btn-publish:disabled{opacity:0.45;cursor:not-allowed;}
+.btn-publish.loading{opacity:0.75;pointer-events:none;}
+.btn-publish.loading .btn-label{display:none;}
+.btn-publish.loading .pub-spinner{display:block;}
+.pub-spinner{width:22px;height:22px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:calc(env(safe-area-inset-top,0px)+12px);left:50%;transform:translateX(-50%) translateY(-80px);z-index:900;display:flex;align-items:center;gap:8px;padding:11px 18px;border-radius:var(--radius-full);font-size:13px;font-weight:500;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.12);transition:transform 0.38s cubic-bezier(0.34,1.4,0.64,1);pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;}
+.toast.error{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;}
+.toast svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;}
+
+/* Success overlay */
+.success-overlay{position:fixed;inset:0;background:var(--gradient);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;opacity:0;pointer-events:none;transition:opacity 0.35s;}
+.success-overlay.show{opacity:1;pointer-events:all;}
+.s-icon{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;animation:popIn 0.5s cubic-bezier(0.34,1.6,0.64,1);}
+@keyframes popIn{from{transform:scale(0.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+.s-icon svg{width:34px;height:34px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.s-title{font-family:'Sora',sans-serif;font-size:24px;font-weight:700;color:white;animation:popIn 0.5s ease 0.1s both;}
+.s-sub{font-size:14px;color:rgba(255,255,255,0.8);animation:popIn 0.4s ease 0.18s both;}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"><svg id="toastIco" viewBox="0 0 24 24"></svg><span id="toastMsg"></span></div>
+<div class="success-overlay" id="successOverlay">
+  <div class="s-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+  <div class="s-title">Published!</div>
+  <div class="s-sub">Your resource is now live for students</div>
+</div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <button class="close-btn" onclick="history.back()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <span class="header-title">Upload Resource</span>
+      <button class="pub-btn" id="pubHeaderBtn" disabled onclick="publishResource()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Publish
+      </button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-selector">
+    <div class="tab-inner">
+      <button class="tab-btn active" id="pdfTab" onclick="switchTab('pdf')">PDF Resource</button>
+      <button class="tab-btn"        id="txtTab" onclick="switchTab('text')">Text Notes</button>
+    </div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="scroll-area">
+
+    <!-- ── THUMBNAIL SECTION ── -->
+    <div class="s-card">
+      <div class="s-card-label">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Thumbnail
+      </div>
+
+      <div class="thumb-box" id="thumbBox" onclick="uploadThumbnail()">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <p>Add Thumbnail (Required)</p>
+        <span class="thumb-hint">16:9 ratio · Max 5MB · One per day</span>
+        <img class="thumb-preview" id="thumbPreview" alt="">
+        <button class="thumb-remove" id="thumbRemoveBtn" onclick="removeThumbnail(event)">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="unlock-banner" id="unlockBanner">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Unlimited uploads unlocked for today!
+      </div>
+      <div class="no-thumb-banner" id="noThumbBanner">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Add a thumbnail to unlock publishing
+      </div>
+    </div>
+
+    <!-- ── RESOURCE DETAILS ── -->
+    <div class="s-card">
+      <div class="s-card-label">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Resource Details
+      </div>
+      <div class="field-group">
+        <div>
+          <div class="field-label">Title <span class="req">*</span></div>
+          <input type="text" class="field-input" id="resTitle" placeholder="Resource title" maxlength="100" oninput="checkReady()" style="margin-top:6px;">
+        </div>
+        <div>
+          <div class="field-label">Subject</div>
+          <select class="field-select" id="resSubject" style="margin-top:6px;">
+            <option value="">Select subject</option>
+            <option>Mathematics</option><option>Physics</option><option>Chemistry</option>
+            <option>Biology</option><option>History</option><option>Geography</option>
+            <option>English</option><option>Hindi</option><option>Assamese</option>
+            <option>Political Science</option><option>Economics</option><option>Computer Science</option>
+            <option>Business Studies</option><option>Accountancy</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PDF TAB ── -->
+    <div class="s-card" id="pdfSection">
+      <div class="s-card-label">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        PDF Source
+      </div>
+      <div class="drive-wrap">
+        <span class="drive-icon"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+        <input class="drive-input" id="driveLink" type="url"
+               placeholder="https://drive.google.com/file/d/..."
+               oninput="onDriveLinkInput(this.value)">
+      </div>
+      <div class="drive-chip" id="driveChip">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span id="driveChipText">PDF link detected</span>
+      </div>
+    </div>
+
+    <!-- ── TEXT TAB ── -->
+    <div class="s-card" id="textSection" style="display:none;">
+      <div class="s-card-label">
+        <svg viewBox="0 0 24 24"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+        Write Notes
+      </div>
+      <div class="editor-toolbar">
+        <button class="fmt-btn" onclick="fmt('bold')" title="Bold"><b>B</b></button>
+        <button class="fmt-btn" onclick="fmt('italic')" title="Italic"><i>I</i></button>
+        <button class="fmt-btn" onclick="fmt('underline')" title="Underline"><u>U</u></button>
+        <div class="fmt-divider"></div>
+        <button class="fmt-btn" onclick="fmt('insertUnorderedList')" title="Bullet list">
+          <svg viewBox="0 0 24 24"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor"/><circle cx="4" cy="12" r="1.5" fill="currentColor"/><circle cx="4" cy="18" r="1.5" fill="currentColor"/></svg>
+        </button>
+        <button class="fmt-btn" onclick="fmt('insertOrderedList')" title="Numbered list">
+          <svg viewBox="0 0 24 24"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+        </button>
+      </div>
+      <div class="text-editor" id="textEditor" contenteditable="true"
+           data-placeholder="Start writing your notes here..."
+           oninput="checkReady()"></div>
+    </div>
+
+    <!-- ── ACADEMIC TARGETING ── -->
+    <div class="s-card">
+      <div class="target-toggle" onclick="toggleTargeting()">
+        <div>
+          <h4>Who is this for?</h4>
+          <p style="font-size:13px;color:var(--text-3);margin-top:2px;">Set class, board, and medium</p>
+        </div>
+        <div class="target-toggle-icon" id="targetIcon">
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+
+      <div class="target-body" id="targetBody">
+        <!-- Class chips -->
+        <div>
+          <div class="field-label" style="margin-bottom:8px;">Class / Grade</div>
+          <div class="chips-row" id="classChips">
+            <div class="chip" data-val="6"  onclick="selectClass(this)">Class 6</div>
+            <div class="chip" data-val="7"  onclick="selectClass(this)">Class 7</div>
+            <div class="chip" data-val="8"  onclick="selectClass(this)">Class 8</div>
+            <div class="chip" data-val="9"  onclick="selectClass(this)">Class 9</div>
+            <div class="chip" data-val="10" onclick="selectClass(this)">Class 10</div>
+            <div class="chip" data-val="11" onclick="selectClass(this)">Class 11</div>
+            <div class="chip" data-val="12" onclick="selectClass(this)">Class 12</div>
+            <div class="chip" data-val="Graduation" onclick="selectClass(this)">Graduation</div>
+          </div>
+        </div>
+
+        <!-- Stream (conditional) -->
+        <div id="streamRow" style="display:none;">
+          <div class="field-label" style="margin-bottom:8px;">Stream</div>
+          <select class="field-select" id="streamSelect">
+            <option value="">Select stream</option>
+            <option>Science (PCM)</option><option>Science (PCB)</option>
+            <option>Commerce</option><option>Arts/Humanities</option><option>Vocational</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="field-label" style="margin-bottom:6px;">Board</div>
+          <select class="field-select" id="boardSelect">
+            <option value="">Select board</option>
+            <option>CBSE</option><option>ICSE</option><option>SEBA</option><option>AHSEC</option>
+            <option>TBSE</option><option>MBSE</option><option>NBSE</option><option>WBBSE</option>
+            <option>WBCHSE</option><option>MSBSHSE</option><option>GSEB</option><option>TN Board</option>
+            <option>AP Board</option><option>Karnataka Board</option><option>Kerala Board</option>
+            <option>BSEB</option><option>UPMSP</option><option>IB</option><option>IGCSE</option><option>Other</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="field-label" style="margin-bottom:6px;">Medium</div>
+          <select class="field-select" id="mediumSelect">
+            <option value="">Select medium</option>
+            <option>English</option><option>Hindi</option><option>Assamese</option>
+            <option>Bengali</option><option>Telugu</option><option>Marathi</option>
+            <option>Tamil</option><option>Urdu</option><option>Gujarati</option>
+            <option>Kannada</option><option>Malayalam</option><option>Odia</option>
+            <option>Punjabi</option>
+          </select>
+        </div>
+
+        <div class="target-note">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
+          Only students matching these filters will see your resource in their feed
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PUBLISH BUTTON ── -->
+    <div class="pub-wrap">
+      <button class="btn-publish" id="pubBtn" disabled onclick="publishResource()">
+        <span class="btn-label">Publish Resource</span>
+        <div class="pub-spinner"></div>
+      </button>
+    </div>
+
+  </div><!-- /scroll-area -->
+</div>
+
+<!-- Cloudinary -->
+<script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, collection,
+  addDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const cfg={apiKey:"AIzaSyDIAPr5dXMoWsgHNMGON1RG6rhxi1ccQUw",authDomain:"twinkle-7dd5f.firebaseapp.com",databaseURL:"https://twinkle-7dd5f-default-rtdb.firebaseio.com",projectId:"twinkle-7dd5f",storageBucket:"twinkle-7dd5f.firebasestorage.app",messagingSenderId:"584206668657",appId:"1:584206668657:web:3bbb1ae83ecd892b50dcd0"};
+const fbApp=initializeApp(cfg);
+const auth=getAuth(fbApp);
+const db=getFirestore(fbApp);
+let currentUser=null,userData=null;
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href='login.html';return;}
+  currentUser=user;
+  const snap=await getDoc(doc(db,'users',user.uid));
+  if(!snap.exists()){window.location.href='profile-form.html';return;}
+  userData=snap.data();
+
+  // Pre-fill targeting from user profile
+  if(userData.classGrade){
+    const chip=document.querySelector(`.chip[data-val="${userData.classGrade}"]`);
+    if(chip) selectClass(chip);
+  }
+  if(userData.board){const s=document.getElementById('boardSelect');if(s) for(let o of s.options)if(o.text===userData.board){s.value=o.value;break;}}
+  if(userData.medium){const s=document.getElementById('mediumSelect');if(s)s.value=userData.medium;}
+});
+
+window.publishResource=async function(){
+  const thumbnailUrl=window._thumbUrl||'';
+  if(!thumbnailUrl){document.getElementById('noThumbBanner').classList.add('show');return;}
+
+  const title=document.getElementById('resTitle').value.trim();
+  if(!title){showToast('error','Please add a title');return;}
+
+  const resourceType=window._activeResTab||'pdf';
+  let content='';
+  if(resourceType==='pdf'){
+    content=document.getElementById('driveLink').value.trim();
+    if(!content){showToast('error','Please paste a Google Drive link');return;}
+  }else{
+    content=document.getElementById('textEditor').innerHTML.trim();
+    if(!content||content==='<br>'){showToast('error','Please write some notes');return;}
+  }
+
+  const btn=document.getElementById('pubBtn');
+  const hBtn=document.getElementById('pubHeaderBtn');
+  btn.classList.add('loading');btn.disabled=true;
+  if(hBtn){hBtn.classList.add('loading');hBtn.disabled=true;}
+
+  try{
+    await addDoc(collection(db,'resources'),{
+      resourceType,
+      title,
+      subject:        document.getElementById('resSubject').value||'',
+      thumbnailUrl,
+      driveLink:      resourceType==='pdf'?content:'',
+      textContent:    resourceType==='text'?content:'',
+      classGrade:     window._selectedClass||userData?.classGrade||'',
+      stream:         document.getElementById('streamSelect')?.value||'',
+      board:          document.getElementById('boardSelect').value||userData?.board||'',
+      medium:         document.getElementById('mediumSelect').value||userData?.medium||'',
+      state:          userData?.state||'',
+      authorId:       currentUser.uid,
+      authorName:     userData?.displayName||'',
+      authorPhoto:    userData?.photoURL||'',
+      boostCount:0,opinionCount:0,spreadCount:0,downloadCount:0,
+      boostedBy:[],savedBy:[],
+      createdAt:      serverTimestamp()
+    });
+    document.getElementById('successOverlay').classList.add('show');
+    setTimeout(()=>window.location.href='profile.html',1400);
+  }catch(e){
+    btn.classList.remove('loading');btn.disabled=false;
+    if(hBtn){hBtn.classList.remove('loading');hBtn.disabled=false;}
+    showToast('error','Publish failed. Try again.');
+  }
+};
+
+function showToast(type,msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastIco').innerHTML=type==='success'?'<polyline points="20 6 9 17 4 12"/>':'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+  t.className=`toast ${type}`;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+window.showToast=showToast;
+</script>
+
+<script>
+window._activeResTab='pdf';
+window._thumbUrl='';
+window._selectedClass='';
+
+/* ── TABS ── */
+function switchTab(tab){
+  window._activeResTab=tab;
+  document.getElementById('pdfTab').classList.toggle('active',tab==='pdf');
+  document.getElementById('txtTab').classList.toggle('active',tab==='text');
+  document.getElementById('pdfSection').style.display=tab==='pdf'?'block':'none';
+  document.getElementById('textSection').style.display=tab==='text'?'block':'none';
+  checkReady();
+}
+window.switchTab=switchTab;
+
+/* ── THUMBNAIL UPLOAD ── */
+function uploadThumbnail(){
+  const widget=cloudinary.createUploadWidget({
+    cloudName:'dh7iftwxa',uploadPreset:'unsigned_upload',
+    folder:'twinkle/thumbnails',
+    cropping:true,croppingAspectRatio:16/9,showSkipCropButton:false,
+    maxFileSize:5242880,clientAllowedFormats:['jpg','jpeg','png'],sources:['local','camera'],
+    styles:{palette:{window:'#FFFFFF',windowBorder:'#EDE9FE',tabIcon:'#5B5BDB',link:'#5B5BDB',action:'#5B5BDB',inProgress:'#5B5BDB',complete:'#22C55E',sourceBg:'#F5F4FF'}}
+  },(err,result)=>{
+    if(result&&result.event==='success'){
+      window._thumbUrl=result.info.secure_url;
+      const prev=document.getElementById('thumbPreview');
+      prev.src=window._thumbUrl;prev.style.display='block';
+      const box=document.getElementById('thumbBox');
+      box.querySelector('svg').style.display='none';
+      box.querySelectorAll('p,span').forEach(el=>el.style.display='none');
+      document.getElementById('thumbRemoveBtn').classList.add('show');
+      document.getElementById('unlockBanner').classList.add('show');
+      document.getElementById('noThumbBanner').classList.remove('show');
+      checkReady();widget.close();
+    }
+  });
+  widget.open();
+}
+window.uploadThumbnail=uploadThumbnail;
+
+function removeThumbnail(e){
+  e.stopPropagation();
+  window._thumbUrl='';
+  const prev=document.getElementById('thumbPreview');
+  prev.style.display='none';prev.src='';
+  const box=document.getElementById('thumbBox');
+  box.querySelector('svg').style.display='';
+  box.querySelectorAll('p,span').forEach(el=>el.style.display='');
+  document.getElementById('thumbRemoveBtn').classList.remove('show');
+  document.getElementById('unlockBanner').classList.remove('show');
+  checkReady();
+}
+window.removeThumbnail=removeThumbnail;
+
+/* ── DRIVE LINK ── */
+function onDriveLinkInput(val){
+  const chip=document.getElementById('driveChip');
+  const isValid=val.includes('drive.google.com')||val.includes('docs.google.com');
+  chip.classList.toggle('show',isValid);
+  document.getElementById('driveChipText').textContent=isValid?'Google Drive link detected':'Paste a valid Drive link';
+  checkReady();
+}
+window.onDriveLinkInput=onDriveLinkInput;
+
+/* ── TEXT EDITOR ── */
+function fmt(cmd){document.execCommand(cmd,false,null);document.getElementById('textEditor').focus();}
+window.fmt=fmt;
+
+/* ── CLASS CHIP ── */
+function selectClass(el){
+  document.querySelectorAll('#classChips .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  window._selectedClass=el.dataset.val;
+  const needStream=['11','12','Graduation'].includes(el.dataset.val);
+  document.getElementById('streamRow').style.display=needStream?'block':'none';
+}
+window.selectClass=selectClass;
+
+/* ── TARGETING TOGGLE ── */
+function toggleTargeting(){
+  const body=document.getElementById('targetBody');
+  const icon=document.getElementById('targetIcon');
+  const isOpen=body.style.display!=='none'&&body.style.display!=='';
+  body.style.display=isOpen?'none':'flex';
+  icon.classList.toggle('open',!isOpen);
+}
+window.toggleTargeting=toggleTargeting;
+
+/* ── CHECK READY ── */
+function checkReady(){
+  const hasThumb=!!window._thumbUrl;
+  const hasTitle=!!document.getElementById('resTitle')?.value.trim();
+  let hasContent=false;
+  if(window._activeResTab==='pdf'){
+    const link=document.getElementById('driveLink')?.value.trim()||'';
+    hasContent=link.includes('drive.google.com')||link.includes('docs.google.com');
+  }else{
+    const text=document.getElementById('textEditor')?.innerHTML.trim()||'';
+    hasContent=text.length>0&&text!=='<br>';
+  }
+  const ready=hasThumb&&hasTitle&&hasContent;
+  document.getElementById('pubBtn').disabled=!ready;
+  document.getElementById('pubHeaderBtn').disabled=!ready;
+}
+window.checkReady=checkReady;
+</script>
+</body>
+</html>
