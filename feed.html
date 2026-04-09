@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Twinkle — Feed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary:    #5B5BDB;
+  --secondary:  #8A8FE8;
+  --accent:     #C7C2F0;
+  --surface:    #F5F4FF;
+  --surface-2:  #EDE9FE;
+  --white:      #FFFFFF;
+  --text-1:     #1A1A2E;
+  --text-2:     #374151;
+  --text-3:     #6B7280;
+  --text-4:     #9CA3AF;
+  --success:    #22C55E;
+  --warning:    #F59E0B;
+  --error:      #EF4444;
+  --border:     #E5E7EB;
+  --bg:         #F7F6FF;
+  --shadow-sm:  0 2px 16px rgba(91,91,219,0.07);
+  --shadow-md:  0 4px 24px rgba(91,91,219,0.12);
+  --radius-lg:  20px;
+  --radius-full:100px;
+  --gradient:   linear-gradient(135deg,#5B5BDB 0%,#8A8FE8 100%);
+  --nav-h:      72px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow:hidden;}
+
+/* ── APP SHELL ── */
+.app{width:100%;max-width:480px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+
+/* ══════════════════════════════════════
+   TOP APP BAR
+══════════════════════════════════════ */
+.app-bar{
+  flex-shrink:0;
+  background:var(--white);
+  border-bottom:1px solid #F3F4F6;
+  padding-top:env(safe-area-inset-top,0px);
+  z-index:100;
+}
+.app-bar-inner{height:60px;display:flex;align-items:center;padding:0 16px;gap:8px;}
+
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.brand-icon{width:32px;height:32px;border-radius:10px;object-fit:cover;flex-shrink:0;}
+.brand-name{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--primary);letter-spacing:-0.3px;}
+
+.bar-right{margin-left:auto;display:flex;align-items:center;gap:4px;}
+.icon-btn{
+  width:40px;height:40px;border-radius:12px;background:none;border:none;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--text-1);transition:background 0.18s;position:relative;
+}
+.icon-btn:active{background:var(--surface-2);}
+.icon-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+.notif-dot{
+  position:absolute;top:7px;right:7px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--error);border:1.5px solid white;
+  display:none;
+}
+.notif-dot.show{display:block;}
+
+/* ══════════════════════════════════════
+   FILTER CHIPS
+══════════════════════════════════════ */
+.filter-row{
+  background:var(--white);
+  border-bottom:1px solid #F3F4F6;
+  padding:0 16px;
+  height:50px;
+  display:flex;align-items:center;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;gap:8px;
+  flex-shrink:0;
+}
+.filter-row::-webkit-scrollbar{display:none;}
+
+.f-chip{
+  flex-shrink:0;height:32px;padding:0 14px;
+  border-radius:var(--radius-full);
+  border:1.5px solid var(--border);
+  background:var(--white);
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  color:var(--text-3);cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;
+  transition:all 0.22s ease;user-select:none;
+}
+.f-chip.active{background:var(--primary);border-color:var(--primary);color:white;font-weight:600;box-shadow:0 2px 10px rgba(91,91,219,0.25);}
+.f-chip:active{transform:scale(0.96);}
+
+/* ══════════════════════════════════════
+   FEED SCROLL AREA
+══════════════════════════════════════ */
+.feed-scroll{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  background:var(--bg);
+  padding:8px 0 calc(var(--nav-h) + 12px);
+}
+.feed-scroll::-webkit-scrollbar{display:none;}
+
+/* ══════════════════════════════════════
+   FEED CARD
+══════════════════════════════════════ */
+.feed-card{
+  background:var(--white);
+  border-radius:var(--radius-lg);
+  margin:0 14px 10px;
+  box-shadow:var(--shadow-sm);
+  overflow:hidden;
+  animation:cardIn 0.35s ease both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* Card header */
+.card-head{
+  display:flex;align-items:center;
+  padding:13px 14px 10px;gap:10px;
+}
+.c-avatar{
+  width:40px;height:40px;border-radius:50%;
+  border:2px solid var(--accent);object-fit:cover;
+  background:var(--surface-2);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--primary);
+  cursor:pointer;text-decoration:none;overflow:hidden;
+}
+.c-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+
+.c-info{flex:1;min-width:0;}
+.c-username{
+  font-family:'Sora',sans-serif;font-size:14px;font-weight:600;
+  color:var(--text-1);cursor:pointer;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.c-username:hover{color:var(--primary);}
+.c-meta{font-size:12px;color:var(--text-4);margin-top:1px;}
+
+.c-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+
+.circle-pill{
+  background:var(--surface-2);color:var(--primary);
+  font-size:11px;font-weight:500;
+  padding:3px 9px;border-radius:var(--radius-full);
+  white-space:nowrap;
+}
+.sponsored-pill{
+  background:#FEF3C7;color:#92400E;
+  font-size:11px;font-weight:500;
+  padding:3px 9px;border-radius:var(--radius-full);
+}
+
+.three-dot{
+  width:34px;height:34px;border-radius:10px;
+  background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-4);transition:background 0.18s,color 0.18s;
+}
+.three-dot:active{background:var(--surface);color:var(--text-2);}
+.three-dot svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Tweet body */
+.tweet-body{padding:0 14px 4px;}
+.tweet-text{
+  font-size:15px;color:var(--text-2);line-height:1.6;
+  word-break:break-word;white-space:pre-wrap;
+}
+.tweet-text.clamped{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+.read-more{font-size:14px;color:var(--primary);font-weight:500;cursor:pointer;display:inline-block;margin-top:2px;}
+.hashtag{color:var(--primary);cursor:pointer;font-weight:500;}
+
+/* Image post */
+.post-meta-wrap{padding:0 14px 8px;}
+.post-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:600;color:var(--text-1);margin-bottom:4px;line-height:1.35;}
+.post-desc{font-size:14px;color:var(--text-2);line-height:1.5;}
+.post-image{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:var(--surface);}
+.post-image-wrap{position:relative;}
+.post-image-placeholder{width:100%;aspect-ratio:1/1;background:linear-gradient(135deg,#EDE9FE,#C7C2F0);display:flex;align-items:center;justify-content:center;}
+.post-image-placeholder svg{width:40px;height:40px;stroke:var(--primary);fill:none;stroke-width:1.5;opacity:0.5;}
+
+/* Action bar */
+.action-bar{
+  display:flex;align-items:center;
+  padding:6px 10px 10px;
+  gap:2px;border-top:1px solid #F9F9FE;margin-top:6px;
+}
+.action-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  gap:5px;padding:8px 4px;border-radius:10px;
+  background:none;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
+  color:var(--text-3);transition:background 0.18s,color 0.18s,transform 0.15s;
+  white-space:nowrap;
+}
+.action-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;transition:stroke 0.2s,fill 0.2s,transform 0.25s;}
+.action-btn:active{transform:scale(0.94);}
+.action-btn:active svg{transform:scale(1.15);}
+
+/* Boost active */
+.action-btn.boosted{color:var(--warning);}
+.action-btn.boosted svg{stroke:var(--warning);fill:var(--warning);}
+
+/* Save active */
+.action-btn.saved svg{stroke:var(--primary);fill:var(--primary);}
+
+/* Save (right-end) */
+.action-btn.save-btn{flex:0 0 40px;}
+
+/* ══════════════════════════════════════
+   SKELETON LOADER
+══════════════════════════════════════ */
+.skeleton-card{
+  background:var(--white);border-radius:var(--radius-lg);
+  margin:0 14px 10px;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.skel{
+  background:linear-gradient(90deg,#F0EFFE 0%,#F9F8FF 50%,#F0EFFE 100%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:8px;
+}
+@keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
+.skel-head{display:flex;align-items:center;gap:10px;padding:14px;}
+.skel-avatar{width:40px;height:40px;border-radius:50%;flex-shrink:0;}
+.skel-lines{flex:1;display:flex;flex-direction:column;gap:8px;}
+.skel-line{height:10px;}
+.skel-body{margin:0 14px 14px;display:flex;flex-direction:column;gap:8px;}
+.skel-image{height:180px;border-radius:12px;}
+.skel-actions{display:flex;gap:8px;padding:0 14px 14px;}
+.skel-act{height:28px;flex:1;border-radius:8px;}
+
+/* ══════════════════════════════════════
+   LOAD MORE SPINNER
+══════════════════════════════════════ */
+.load-more-wrap{
+  display:none;flex-direction:column;align-items:center;gap:10px;
+  padding:20px 0 8px;
+}
+.load-more-wrap.show{display:flex;}
+.pulse-ring{
+  width:40px;height:40px;border-radius:50%;
+  border:3px solid var(--accent);
+  border-top-color:var(--primary);
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.load-more-wrap p{font-size:13px;color:var(--text-3);}
+
+/* ══════════════════════════════════════
+   EMPTY STATE
+══════════════════════════════════════ */
+.empty-state{
+  display:none;flex-direction:column;align-items:center;
+  justify-content:center;gap:12px;
+  padding:48px 32px;text-align:center;
+  min-height:400px;
+}
+.empty-state.show{display:flex;}
+.empty-illus{width:120px;height:120px;margin-bottom:8px;}
+.empty-state h3{font-family:'Sora',sans-serif;font-size:18px;font-weight:600;color:var(--text-1);}
+.empty-state p{font-size:14px;color:var(--text-3);line-height:1.5;max-width:260px;}
+.btn-explore{
+  margin-top:8px;height:44px;padding:0 24px;
+  border-radius:var(--radius-full);border:1.5px solid var(--primary);
+  background:none;color:var(--primary);
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;transition:background 0.2s,color 0.2s;
+}
+.btn-explore:active{background:var(--primary);color:white;}
+
+/* ══════════════════════════════════════
+   ERROR STATE
+══════════════════════════════════════ */
+.error-state{display:none;flex-direction:column;align-items:center;gap:12px;padding:48px 32px;text-align:center;}
+.error-state.show{display:flex;}
+.error-state svg{width:40px;height:40px;stroke:var(--text-4);fill:none;stroke-width:1.5;}
+.error-state h3{font-family:'Sora',sans-serif;font-size:16px;color:var(--text-1);}
+.btn-retry{height:40px;padding:0 24px;border-radius:var(--radius-full);border:1.5px solid var(--primary);background:none;color:var(--primary);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+
+/* ══════════════════════════════════════
+   BOTTOM NAV
+══════════════════════════════════════ */
+.bottom-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));
+  background:var(--white);
+  border-top:1px solid #F0F0F5;
+  box-shadow:0 -4px 20px rgba(0,0,0,0.06);
+  display:flex;align-items:flex-start;justify-content:space-around;
+  padding:8px 8px 0;
+  z-index:100;
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:3px;cursor:pointer;padding:6px 4px 0;
+  position:relative;text-decoration:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-item svg{width:23px;height:23px;stroke:var(--text-4);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke 0.2s;}
+.nav-item span{font-size:10px;color:var(--text-4);font-weight:500;transition:color 0.2s;}
+.nav-item.active svg{stroke:var(--primary);}
+.nav-item.active span{color:var(--primary);font-weight:600;}
+.nav-dot{position:absolute;top:2px;width:4px;height:4px;border-radius:50%;background:var(--primary);display:none;}
+.nav-item.active .nav-dot{display:block;}
+
+/* Upload nav btn */
+.nav-upload{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:3px;cursor:pointer;padding:2px 4px 0;
+  text-decoration:none;-webkit-tap-highlight-color:transparent;
+}
+.nav-upload-icon{
+  width:48px;height:48px;border-radius:50%;
+  background:var(--gradient);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(91,91,219,0.35);
+  margin-top:-14px;
+  transition:transform 0.18s,box-shadow 0.18s;
+}
+.nav-upload-icon:active{transform:scale(0.94);box-shadow:0 2px 8px rgba(91,91,219,0.25);}
+.nav-upload-icon svg{width:22px;height:22px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.nav-upload span{font-size:10px;color:var(--text-4);font-weight:500;}
+
+/* ══════════════════════════════════════
+   BOTTOM SHEET (Opinion / Spread / 3-dot)
+══════════════════════════════════════ */
+.sheet-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.42);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  z-index:500;opacity:0;pointer-events:none;
+  transition:opacity 0.28s ease;
+}
+.sheet-overlay.show{opacity:1;pointer-events:all;}
+
+.bottom-sheet{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
+  width:100%;max-width:480px;
+  background:var(--white);
+  border-radius:28px 28px 0 0;
+  z-index:501;
+  transition:transform 0.38s cubic-bezier(0.34,1.08,0.64,1);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  max-height:85dvh;display:flex;flex-direction:column;
+}
+.bottom-sheet.show{transform:translateX(-50%) translateY(0);}
+
+.sheet-drag{width:40px;height:4px;background:#E5E7EB;border-radius:2px;margin:14px auto 0;}
+.sheet-header{padding:16px 20px 12px;border-bottom:1px solid #F3F4F6;flex-shrink:0;}
+.sheet-title{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--text-1);}
+.sheet-sub{font-size:13px;color:var(--text-3);margin-top:2px;}
+
+/* Opinion sheet */
+.opinion-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.opinion-item{display:flex;gap:10px;padding:14px 18px;border-bottom:1px solid #F9F9FE;}
+.op-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface-2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--primary);overflow:hidden;}
+.op-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.op-body{flex:1;}
+.op-username{font-family:'Sora',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);}
+.op-text{font-size:14px;color:var(--text-2);line-height:1.5;margin-top:2px;}
+.op-time{font-size:11px;color:var(--text-4);margin-top:3px;}
+
+.opinion-empty{padding:32px;text-align:center;color:var(--text-3);font-size:14px;}
+
+.opinion-input-row{
+  display:flex;align-items:flex-end;gap:10px;
+  padding:12px 16px;border-top:1px solid #F3F4F6;flex-shrink:0;
+}
+.opinion-textarea{
+  flex:1;min-height:42px;max-height:120px;
+  background:#F3F4F6;border:1.5px solid transparent;
+  border-radius:var(--radius-full);
+  padding:11px 16px;resize:none;outline:none;overflow:hidden;
+  font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text-1);
+  transition:border-color 0.2s,background 0.2s;
+  line-height:1.4;
+}
+.opinion-textarea:focus{background:var(--white);border-color:var(--accent);}
+.opinion-textarea::placeholder{color:var(--text-4);}
+.opinion-send{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--gradient);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;box-shadow:0 2px 10px rgba(91,91,219,0.28);
+  transition:transform 0.18s,opacity 0.18s;
+}
+.opinion-send:active{transform:scale(0.92);}
+.opinion-send svg{width:16px;height:16px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Spread sheet */
+.spread-options{padding:8px 16px 20px;display:flex;flex-direction:column;gap:4px;}
+.spread-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;border-radius:14px;cursor:pointer;
+  transition:background 0.18s;
+}
+.spread-item:active{background:var(--surface);}
+.spread-item-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--surface-2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.spread-item-icon svg{width:20px;height:20px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.spread-item-text h4{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--text-1);}
+.spread-item-text p{font-size:13px;color:var(--text-3);margin-top:1px;}
+
+/* 3-dot menu sheet */
+.menu-options{padding:8px 16px 20px;display:flex;flex-direction:column;gap:4px;}
+.menu-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;border-radius:14px;cursor:pointer;
+  font-size:15px;font-weight:500;color:var(--text-1);
+  transition:background 0.18s;
+}
+.menu-item:active{background:var(--surface);}
+.menu-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.menu-item.danger{color:var(--error);}
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+.toast{
+  position:fixed;top:calc(env(safe-area-inset-top,0px)+12px);
+  left:50%;transform:translateX(-50%) translateY(-80px);
+  z-index:900;display:flex;align-items:center;gap:8px;
+  padding:11px 18px;border-radius:var(--radius-full);
+  font-size:13px;font-weight:500;white-space:nowrap;
+  box-shadow:0 4px 20px rgba(0,0,0,0.12);
+  transition:transform 0.38s cubic-bezier(0.34,1.4,0.64,1);pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;}
+.toast.info{background:var(--surface-2);color:var(--primary);border:1px solid var(--accent);}
+.toast svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg id="toastIco" viewBox="0 0 24 24"></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- OPINION SHEET -->
+<div class="sheet-overlay" id="opOverlay" onclick="closeSheet('op')"></div>
+<div class="bottom-sheet" id="opSheet">
+  <div class="sheet-drag"></div>
+  <div class="sheet-header">
+    <div class="sheet-title">Opinions</div>
+    <div class="sheet-sub" id="opCount">0 opinions on this post</div>
+  </div>
+  <div class="opinion-list" id="opList"></div>
+  <div class="opinion-input-row">
+    <textarea class="opinion-textarea" id="opInput" placeholder="Share your opinion..." rows="1"
+      oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+    <button class="opinion-send" onclick="postOpinion()">
+      <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- SPREAD SHEET -->
+<div class="sheet-overlay" id="spreadOverlay" onclick="closeSheet('spread')"></div>
+<div class="bottom-sheet" id="spreadSheet">
+  <div class="sheet-drag"></div>
+  <div class="sheet-header"><div class="sheet-title">Spread this post</div><div class="sheet-sub">Help more students discover this</div></div>
+  <div class="spread-options">
+    <div class="spread-item" onclick="doSpread('circle')">
+      <div class="spread-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+      <div class="spread-item-text"><h4>Send to Circle</h4><p>Share privately with your Circle</p></div>
+    </div>
+    <div class="spread-item" onclick="doSpread('copy')">
+      <div class="spread-item-icon"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div>
+      <div class="spread-item-text"><h4>Copy Link</h4><p>Copy post link to clipboard</p></div>
+    </div>
+    <div class="spread-item" onclick="doSpread('native')">
+      <div class="spread-item-icon"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      <div class="spread-item-text"><h4>Share</h4><p>Share via other apps</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- 3-DOT MENU SHEET -->
+<div class="sheet-overlay" id="menuOverlay" onclick="closeSheet('menu')"></div>
+<div class="bottom-sheet" id="menuSheet">
+  <div class="sheet-drag"></div>
+  <div class="menu-options">
+    <div class="menu-item" onclick="menuAction('notinterested')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      Not interested in this
+    </div>
+    <div class="menu-item" onclick="menuAction('block')">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      Block this user
+    </div>
+    <div class="menu-item danger" onclick="menuAction('report')">
+      <svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Report post
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- APP BAR -->
+  <div class="app-bar">
+    <div class="app-bar-inner">
+      <a class="brand" href="feed.html">
+        <img src="https://i.ibb.co/Mxgv1xhV/20260402-091213.png" alt="Twinkle" class="brand-icon"
+             onerror="this.style.background='#5B5BDB';this.style.borderRadius='10px';">
+        <span class="brand-name">Twinkle</span>
+      </a>
+      <div class="bar-right">
+        <button class="icon-btn" onclick="nav('search.html')" aria-label="Search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="icon-btn" onclick="nav('notifications.html')" aria-label="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="notif-dot" id="notifDot"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER CHIPS -->
+  <div class="filter-row" id="filterRow">
+    <div class="f-chip active" data-filter="foryou"   onclick="setFilter(this)">For You</div>
+    <div class="f-chip"       data-filter="circle"    onclick="setFilter(this)">Your Circle</div>
+    <div class="f-chip"       data-filter="trending"  onclick="setFilter(this)">Trending</div>
+    <div class="f-chip"       data-filter="board"     onclick="setFilter(this)">Your Board</div>
+    <div class="f-chip"       data-filter="class"     onclick="setFilter(this)">Your Class</div>
+  </div>
+
+  <!-- FEED -->
+  <div class="feed-scroll" id="feedScroll">
+
+    <!-- Skeleton placeholders (shown during load) -->
+    <div id="skeletons">
+      <div class="skeleton-card">
+        <div class="skel-head"><div class="skel skel-avatar"></div><div class="skel-lines"><div class="skel" style="width:60%"></div><div class="skel" style="width:40%"></div></div></div>
+        <div class="skel-body"><div class="skel skel-image"></div><div class="skel" style="height:10px;width:80%;"></div><div class="skel" style="height:10px;width:60%;"></div></div>
+        <div class="skel-actions"><div class="skel skel-act"></div><div class="skel skel-act"></div><div class="skel skel-act"></div></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skel-head"><div class="skel skel-avatar"></div><div class="skel-lines"><div class="skel" style="width:55%"></div><div class="skel" style="width:35%"></div></div></div>
+        <div class="skel-body"><div class="skel" style="height:10px;width:100%;"></div><div class="skel" style="height:10px;width:85%;"></div><div class="skel" style="height:10px;width:70%;"></div></div>
+        <div class="skel-actions"><div class="skel skel-act"></div><div class="skel skel-act"></div><div class="skel skel-act"></div></div>
+      </div>
+    </div>
+
+    <!-- Feed posts rendered here -->
+    <div id="feedList"></div>
+
+    <!-- Load more spinner -->
+    <div class="load-more-wrap" id="loadMore">
+      <div class="pulse-ring"></div>
+      <p>Finding more content for you...</p>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <svg class="empty-illus" viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="48" fill="#EDE9FE" opacity="0.6"/>
+        <rect x="34" y="38" width="52" height="44" rx="8" fill="#5B5BDB" opacity="0.15"/>
+        <rect x="40" y="44" width="40" height="6" rx="3" fill="#5B5BDB" opacity="0.4"/>
+        <rect x="40" y="55" width="32" height="6" rx="3" fill="#8A8FE8" opacity="0.4"/>
+        <rect x="40" y="66" width="36" height="6" rx="3" fill="#8A8FE8" opacity="0.3"/>
+        <circle cx="78" cy="42" r="14" fill="#5B5BDB" opacity="0.9"/>
+        <path d="M73 42 l3 3 6-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h3>Your feed is getting ready</h3>
+      <p>Add people to your Circle and explore content to personalise your feed.</p>
+      <button class="btn-explore" onclick="nav('search.html')">Explore Twinkle</button>
+    </div>
+
+    <!-- Error state -->
+    <div class="error-state" id="errorState">
+      <svg viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+      <h3>No connection</h3>
+      <p style="font-size:14px;color:var(--text-3);">Check your internet and try again.</p>
+      <button class="btn-retry" onclick="loadFeed()">Retry</button>
+    </div>
+
+  </div><!-- /feed-scroll -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a class="nav-item active" href="feed.html">
+      <div class="nav-dot"></div>
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Feed</span>
+    </a>
+    <a class="nav-item" href="resources.html">
+      <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span>Resources</span>
+    </a>
+    <a class="nav-upload" href="upload-hub.html">
+      <div class="nav-upload-icon">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <span>Upload</span>
+    </a>
+    <a class="nav-item" href="chat-list.html">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Chat</span>
+    </a>
+    <a class="nav-item" href="profile.html">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, query, where,
+  orderBy, limit, getDocs, doc, getDoc,
+  addDoc, updateDoc, increment, serverTimestamp,
+  arrayUnion, arrayRemove
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyDIAPr5dXMoWsgHNMGON1RG6rhxi1ccQUw",
+  authDomain:"twinkle-7dd5f.firebaseapp.com",
+  databaseURL:"https://twinkle-7dd5f-default-rtdb.firebaseio.com",
+  projectId:"twinkle-7dd5f",
+  storageBucket:"twinkle-7dd5f.firebasestorage.app",
+  messagingSenderId:"584206668657",
+  appId:"1:584206668657:web:3bbb1ae83ecd892b50dcd0",
+  measurementId:"G-GS6XV7D1D8"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const auth  = getAuth(fbApp);
+const db    = getFirestore(fbApp);
+
+let currentUser = null;
+let userData    = null;
+let activeFilter = 'foryou';
+let _activePostId = null;
+
+// ── Auth guard ──
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  currentUser = user;
+
+  const snap = await getDoc(doc(db,'users',user.uid));
+  if (!snap.exists()) { window.location.href = 'profile-form.html'; return; }
+  userData = snap.data();
+  if (!userData.academicProfileComplete) { window.location.href='profile-form.html'; return; }
+
+  window._userData = userData;
+  window._db       = db;
+  window._auth     = auth;
+
+  // Check unread notifications
+  checkNotifDot();
+  loadFeed();
+});
+
+// ── Notification dot ──
+async function checkNotifDot() {
+  try {
+    const q = query(
+      collection(db,'notifications'),
+      where('userId','==',currentUser.uid),
+      where('read','==',false),
+      limit(1)
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) document.getElementById('notifDot').classList.add('show');
+  } catch {}
+}
+
+// ── FEED LOAD ──
+window.loadFeed = async function() {
+  document.getElementById('skeletons').style.display='block';
+  document.getElementById('feedList').innerHTML='';
+  document.getElementById('emptyState').classList.remove('show');
+  document.getElementById('errorState').classList.remove('show');
+
+  try {
+    let posts = [];
+
+    // Base query — get recent posts
+    const baseQ = query(
+      collection(db,'posts'),
+      orderBy('createdAt','desc'),
+      limit(40)
+    );
+    const snap = await getDocs(baseQ);
+    snap.forEach(d => posts.push({ id:d.id, ...d.data() }));
+
+    // Get user's circle
+    const circleIds = userData.circleList || [];
+
+    // Algorithm scoring
+    posts = scoreAndSort(posts, circleIds, activeFilter);
+
+    // Inject ads every 10 posts
+    const adsSnap = await getDocs(query(collection(db,'ads'), limit(3)));
+    const ads = [];
+    adsSnap.forEach(d => ads.push({ id:d.id, ...d.data(), _isAd:true }));
+
+    const feed = injectAds(posts, ads);
+
+    document.getElementById('skeletons').style.display='none';
+
+    if (!feed.length) {
+      document.getElementById('emptyState').classList.add('show');
+      return;
+    }
+
+    renderFeed(feed);
+
+  } catch(e) {
+    console.error(e);
+    document.getElementById('skeletons').style.display='none';
+    document.getElementById('errorState').classList.add('show');
+  }
+};
+window.loadFeed = window.loadFeed; // expose
+
+// ── Algorithm scoring ──
+function scoreAndSort(posts, circleIds, filter) {
+  const now = Date.now();
+  return posts
+    .filter(p => {
+      if (filter === 'circle')   return circleIds.includes(p.authorId);
+      if (filter === 'board')    return p.board === userData.board;
+      if (filter === 'class')    return String(p.classGrade) === String(userData.classGrade);
+      return true; // foryou + trending — include all, rely on score
+    })
+    .map(p => {
+      const boosts   = p.boostCount  || 0;
+      const opinions = p.opinionCount || 0;
+      const spreads  = p.spreadCount  || 0;
+      const ts = p.createdAt?.toMillis?.() || now;
+      const ageHours = (now - ts) / 3600000;
+      const recency  = Math.max(0, 1 - ageHours / 72); // decay over 3 days
+
+      let score = (boosts*3) + (opinions*2) + (spreads*4) + (recency * 20);
+
+      // Circle multiplier
+      if (circleIds.includes(p.authorId)) score *= 1.5;
+      // Board match
+      if (p.board === userData.board) score *= 1.3;
+      // Class match
+      if (String(p.classGrade) === String(userData.classGrade)) score *= 1.2;
+
+      if (filter === 'trending') score = (boosts*3) + (opinions*2) + (spreads*4);
+
+      return { ...p, _score: score, _inCircle: circleIds.includes(p.authorId) };
+    })
+    .sort((a,b) => b._score - a._score);
+}
+
+// ── Inject ads ──
+function injectAds(posts, ads) {
+  if (!ads.length) return posts;
+  const result = [];
+  let adIdx = 0;
+  posts.forEach((p, i) => {
+    result.push(p);
+    if ((i+1) % 10 === 0 && adIdx < ads.length) {
+      result.push(ads[adIdx++]);
+    }
+  });
+  return result;
+}
+
+// ── RENDER ──
+function renderFeed(items) {
+  const list = document.getElementById('feedList');
+  items.forEach((item, idx) => {
+    const el = document.createElement('div');
+    el.innerHTML = item._isAd ? buildAdCard(item) : buildPostCard(item);
+    const card = el.firstChild;
+    card.style.animationDelay = (idx * 0.04) + 's';
+    list.appendChild(card);
+  });
+}
+
+function buildPostCard(p) {
+  const isCircle   = p._inCircle;
+  const isTweet    = p.type === 'tweet';
+  const timeAgo    = getTimeAgo(p.createdAt);
+  const initial    = (p.authorName || p.authorId || 'U')[0].toUpperCase();
+  const boosted    = (p.boostedBy || []).includes(currentUser?.uid);
+  const saved      = (p.savedBy   || []).includes(currentUser?.uid);
+
+  const avatarHtml = p.authorPhoto
+    ? `<img src="${p.authorPhoto}" alt="" loading="lazy">`
+    : initial;
+
+  const circlePill = isCircle
+    ? `<span class="circle-pill">From Your Circle</span>` : '';
+
+  const content = isTweet
+    ? buildTweetContent(p)
+    : buildPostContent(p);
+
+  return `
+  <div class="feed-card" id="card-${p.id}">
+    <div class="card-head">
+      <a class="c-avatar" href="user-profile.html?uid=${p.authorId}">${avatarHtml}</a>
+      <div class="c-info">
+        <div class="c-username" onclick="nav('user-profile.html?uid=${p.authorId}')">${escHtml(p.authorName || p.authorId || 'Student')}</div>
+        <div class="c-meta">${escHtml(p.classGrade ? 'Class '+p.classGrade+' · ' : '')}${escHtml(p.board||'')}${p.board?' · ':''}${timeAgo}</div>
+      </div>
+      <div class="c-right">
+        ${circlePill}
+        <button class="three-dot" onclick="openMenu('${p.id}')" aria-label="Options">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </button>
+      </div>
+    </div>
+    ${content}
+    <div class="action-bar">
+      <button class="action-btn ${boosted?'boosted':''}" id="boost-${p.id}" onclick="handleBoost('${p.id}','${p.authorId}')">
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>${boosted?'Boosted':'Boost'} · ${p.boostCount||0}</span>
+      </button>
+      <button class="action-btn" onclick="openOpinion('${p.id}')">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Opinion · ${p.opinionCount||0}</span>
+      </button>
+      <button class="action-btn" onclick="openSpread('${p.id}')">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <span>Spread · ${p.spreadCount||0}</span>
+      </button>
+      <button class="action-btn save-btn ${saved?'saved':''}" id="save-${p.id}" onclick="handleSave('${p.id}')" aria-label="Save">
+        <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function buildTweetContent(p) {
+  const text = escHtml(p.content || '').replace(/#(\w+)/g,'<span class="hashtag">#$1</span>');
+  const long  = (p.content||'').length > 280;
+  return `
+  <div class="tweet-body">
+    <div class="tweet-text ${long?'clamped':''}" id="twt-${p.id}">${text}</div>
+    ${long ? `<span class="read-more" onclick="expandTweet('${p.id}')">Read more</span>` : ''}
+  </div>`;
+}
+
+function buildPostContent(p) {
+  const imgHtml = p.imageUrl
+    ? `<div class="post-image-wrap"><img class="post-image" src="${escHtml(p.imageUrl)}" loading="lazy" alt="${escHtml(p.title||'')}"></div>`
+    : `<div class="post-image-wrap"><div class="post-image-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div></div>`;
+  return `
+  <div class="post-meta-wrap">
+    <div class="post-title">${escHtml(p.title||'')}</div>
+    ${p.description ? `<div class="post-desc">${escHtml(p.description)}</div>` : ''}
+  </div>
+  ${imgHtml}`;
+}
+
+function buildAdCard(ad) {
+  return `
+  <div class="feed-card">
+    <div class="card-head">
+      <div class="c-avatar" style="background:var(--surface-2);">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--primary);fill:none;stroke-width:2;"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <div class="c-info">
+        <div class="c-username">${escHtml(ad.channelName||'Sponsored')}</div>
+        <div class="c-meta">Promoted content</div>
+      </div>
+      <span class="sponsored-pill">Sponsored</span>
+    </div>
+    ${ad.bannerUrl ? `<img class="post-image" src="${escHtml(ad.bannerUrl)}" loading="lazy" style="cursor:pointer;" onclick="trackAdClick('${ad.id}')">` : ''}
+    <div class="action-bar" style="border-top:1px solid #F9F9FE;margin-top:6px;">
+      <button class="action-btn" onclick="handleBoost('${ad.id}','ad')">
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>Boost</span>
+      </button>
+      <button class="action-btn" onclick="openOpinion('${ad.id}')">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Opinion</span>
+      </button>
+      <button class="action-btn" onclick="trackAdClick('${ad.id}');openSpread('${ad.id}')">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <span>Spread</span>
+      </button>
+    </div>
+  </div>`;
+}
+
+// ── BOOST ──
+window.handleBoost = async function(postId, authorId) {
+  if (!currentUser) return;
+  const pRef = doc(db,'posts',postId);
+  const btn  = document.getElementById(`boost-${postId}`);
+  if (!btn) return;
+
+  const isBoosted = btn.classList.contains('boosted');
+
+  // Optimistic UI
+  btn.classList.toggle('boosted', !isBoosted);
+  const countEl = btn.querySelector('span');
+  if (countEl) {
+    const parts = countEl.textContent.split(' · ');
+    const n = parseInt(parts[1]||0) + (isBoosted ? -1 : 1);
+    countEl.textContent = (isBoosted ? 'Boost' : 'Boosted') + ' · ' + Math.max(0,n);
+  }
+
+  // Animate
+  btn.querySelector('svg').style.transform='scale(1.4)';
+  setTimeout(()=>{ if(btn.querySelector('svg')) btn.querySelector('svg').style.transform='scale(1)'; },250);
+
+  try {
+    if (isBoosted) {
+      await updateDoc(pRef, { boostCount: increment(-1), boostedBy: arrayRemove(currentUser.uid) });
+    } else {
+      await updateDoc(pRef, { boostCount: increment(1),  boostedBy: arrayUnion(currentUser.uid) });
+      // Notify author
+      if (authorId && authorId !== currentUser.uid && authorId !== 'ad') {
+        await addDoc(collection(db,'notifications'), {
+          userId: authorId, type:'boost',
+          fromUser: currentUser.uid, fromName: userData.displayName||'',
+          postId, read:false, createdAt: serverTimestamp()
+        });
+      }
+    }
+  } catch(e) {
+    // Revert on error
+    btn.classList.toggle('boosted', isBoosted);
+    showToast('info','Could not update. Check connection.');
+  }
+};
+
+// ── SAVE ──
+window.handleSave = async function(postId) {
+  if (!currentUser) return;
+  const btn = document.getElementById(`save-${postId}`);
+  if (!btn) return;
+  const isSaved = btn.classList.contains('saved');
+  btn.classList.toggle('saved', !isSaved);
+  btn.querySelector('svg').style.transform='scale(1.3)';
+  setTimeout(()=>{ if(btn.querySelector('svg')) btn.querySelector('svg').style.transform='scale(1)'; },200);
+  try {
+    const uRef = doc(db,'users',currentUser.uid);
+    if (isSaved) await updateDoc(uRef, { savedPosts: arrayRemove(postId) });
+    else         await updateDoc(uRef, { savedPosts: arrayUnion(postId)  });
+    showToast('success', isSaved ? 'Removed from saved' : 'Post saved!');
+  } catch {}
+};
+
+// ── OPINIONS ──
+window.openOpinion = async function(postId) {
+  _activePostId = postId;
+  openSheet('op');
+  document.getElementById('opList').innerHTML = '<div class="opinion-empty">Loading opinions...</div>';
+
+  try {
+    const q = query(
+      collection(db,'opinions'),
+      where('postId','==',postId),
+      orderBy('createdAt','asc'),
+      limit(30)
+    );
+    const snap = await getDocs(q);
+    const ops  = [];
+    snap.forEach(d => ops.push({ id:d.id, ...d.data() }));
+
+    document.getElementById('opCount').textContent = `${ops.length} opinion${ops.length!==1?'s':''} on this post`;
+
+    if (!ops.length) {
+      document.getElementById('opList').innerHTML = '<div class="opinion-empty">No opinions yet. Be the first!</div>';
+      return;
+    }
+
+    document.getElementById('opList').innerHTML = ops.map(op => {
+      const init = (op.authorName||'U')[0].toUpperCase();
+      const avatarHtml = op.authorPhoto ? `<img src="${escHtml(op.authorPhoto)}" alt="">` : init;
+      return `
+      <div class="opinion-item">
+        <div class="op-avatar">${avatarHtml}</div>
+        <div class="op-body">
+          <div class="op-username">${escHtml(op.authorName||'Student')}</div>
+          <div class="op-text">${escHtml(op.text||'')}</div>
+          <div class="op-time">${getTimeAgo(op.createdAt)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch {}
+};
+
+window.postOpinion = async function() {
+  const text = document.getElementById('opInput').value.trim();
+  if (!text || !_activePostId || !currentUser) return;
+
+  document.getElementById('opInput').value = '';
+  try {
+    await addDoc(collection(db,'opinions'), {
+      postId: _activePostId,
+      authorId:    currentUser.uid,
+      authorName:  userData.displayName||'',
+      authorPhoto: userData.photoURL||'',
+      text, createdAt: serverTimestamp()
+    });
+    // Increment count on post
+    await updateDoc(doc(db,'posts',_activePostId), { opinionCount: increment(1) });
+    // Refresh opinions
+    openOpinion(_activePostId);
+    showToast('success','Opinion posted!');
+  } catch { showToast('info','Could not post. Try again.'); }
+};
+
+// ── SPREAD ──
+window.openSpread = function(postId) {
+  _activePostId = postId;
+  openSheet('spread');
+};
+
+window.doSpread = async function(type) {
+  closeSheet('spread');
+  if (type==='copy') {
+    try {
+      await navigator.clipboard.writeText(location.origin + '/post.html?id=' + _activePostId);
+      showToast('success','Link copied!');
+    } catch { showToast('info','Copy not supported in this browser.'); }
+  } else if (type==='native') {
+    try {
+      await navigator.share({ title:'Check this on Twinkle', url: location.origin+'/post.html?id='+_activePostId });
+    } catch {}
+  } else {
+    showToast('success','Spread to your Circle!');
+  }
+  // Track spread
+  try { await updateDoc(doc(db,'posts',_activePostId), { spreadCount: increment(1) }); } catch {}
+};
+
+// ── 3-DOT MENU ──
+window.openMenu = function(postId) {
+  _activePostId = postId;
+  openSheet('menu');
+};
+window.menuAction = function(action) {
+  closeSheet('menu');
+  if (action==='notinterested') showToast('info','We'll show less like this.');
+  if (action==='block')         showToast('info','User blocked.');
+  if (action==='report')        { showToast('success','Report submitted. Thank you.'); }
+};
+
+// ── AD CLICK TRACKER ──
+window.trackAdClick = async function(adId) {
+  try { await updateDoc(doc(db,'ads',adId), { clicks: increment(1) }); } catch {}
+};
+
+// ── HELPERS ──
+function getTimeAgo(ts) {
+  if (!ts) return 'just now';
+  const ms = ts?.toMillis?.() || (ts?.seconds*1000) || Date.now();
+  const diff = Date.now() - ms;
+  const m = Math.floor(diff/60000);
+  const h = Math.floor(diff/3600000);
+  const d = Math.floor(diff/86400000);
+  if (m < 1)  return 'just now';
+  if (m < 60) return m+'m ago';
+  if (h < 24) return h+'h ago';
+  if (d < 7)  return d+'d ago';
+  return new Date(ms).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+}
+
+function showToast(type, msg) {
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastIco').innerHTML = type==='success'
+    ? '<polyline points="20 6 9 17 4 12"/>'
+    : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+  t.className=`toast ${type}`;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+window.showToast = showToast;
+</script>
+
+<script>
+/* ============================================================
+   NON-MODULE UI
+============================================================ */
+function escHtml(s){
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+window.escHtml = escHtml;
+
+// ── Filter ──
+function setFilter(el) {
+  document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  window._activeFilter = el.dataset.filter;
+  if (window.loadFeed) {
+    // update activeFilter in module scope via a simple reload
+    window.loadFeed();
+  }
+}
+window.setFilter = setFilter;
+
+// After module sets filter var, keep in sync
+window._activeFilter = 'foryou';
+
+// ── Navigation ──
+function nav(url) { window.location.href = url; }
+window.nav = nav;
+
+// ── Sheets ──
+function openSheet(id) {
+  document.getElementById(id+'Overlay').classList.add('show');
+  document.getElementById(id+'Sheet').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeSheet(id) {
+  document.getElementById(id+'Overlay').classList.remove('show');
+  document.getElementById(id+'Sheet').classList.remove('show');
+  document.body.style.overflow='';
+}
+window.openSheet  = openSheet;
+window.closeSheet = closeSheet;
+
+// ── Tweet expand ──
+function expandTweet(id) {
+  const el = document.getElementById('twt-'+id);
+  const rm = el?.nextElementSibling;
+  if (el) el.classList.remove('clamped');
+  if (rm && rm.classList.contains('read-more')) rm.remove();
+}
+window.expandTweet = expandTweet;
+
+// ── Infinite scroll ──
+document.getElementById('feedScroll').addEventListener('scroll', function() {
+  const el = this;
+  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 200) {
+    // Near bottom → show spinner briefly (no real pagination in demo)
+    const lm = document.getElementById('loadMore');
+    if (!lm.classList.contains('show')) {
+      lm.classList.add('show');
+      setTimeout(() => lm.classList.remove('show'), 2000);
+    }
+  }
+});
+
+// ── Swipe down to close sheets ──
+['op','spread','menu'].forEach(id => {
+  const sheet = document.getElementById(id+'Sheet');
+  let startY = 0;
+  sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive:true});
+  sheet.addEventListener('touchend',   e => {
+    if (e.changedTouches[0].clientY - startY > 60) closeSheet(id);
+  }, {passive:true});
+});
+</script>
+</body>
+</html>
