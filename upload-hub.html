@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Twinkle — Create</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#5B5BDB;--secondary:#8A8FE8;--accent:#C7C2F0;
+  --surface:#F5F4FF;--surface-2:#EDE9FE;--white:#FFFFFF;
+  --text-1:#1A1A2E;--text-2:#374151;--text-3:#6B7280;--text-4:#9CA3AF;
+  --success:#22C55E;--border:#E5E7EB;--bg:#F7F6FF;
+  --gradient:linear-gradient(135deg,#5B5BDB 0%,#8A8FE8 100%);
+  --radius-lg:20px;--radius-xl:24px;--radius-full:100px;
+  --nav-h:72px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow:hidden;}
+
+/* ── BACKGROUND (blurred feed behind sheet) ── */
+.bg-page{
+  position:fixed;inset:0;
+  background:var(--bg);
+  z-index:0;
+}
+
+/* ── OVERLAY ── */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(10,8,30,0.55);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  z-index:10;
+  animation:fadeIn 0.25s ease;
+}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* ── BOTTOM SHEET ── */
+.sheet{
+  position:fixed;bottom:0;left:50%;
+  transform:translateX(-50%) translateY(0);
+  width:100%;max-width:480px;
+  background:var(--white);
+  border-radius:28px 28px 0 0;
+  z-index:20;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 32px);
+  animation:sheetUp 0.42s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 -8px 48px rgba(91,91,219,0.18);
+}
+@keyframes sheetUp{
+  from{transform:translateX(-50%) translateY(100%);}
+  to{transform:translateX(-50%) translateY(0);}
+}
+.sheet.closing{
+  animation:sheetDown 0.3s cubic-bezier(0.4,0,0.6,1) forwards;
+}
+@keyframes sheetDown{
+  to{transform:translateX(-50%) translateY(110%);}
+}
+.overlay.closing{animation:fadeOut 0.3s ease forwards;}
+@keyframes fadeOut{to{opacity:0;}}
+
+/* Drag handle */
+.drag-handle{
+  width:40px;height:4px;
+  background:#E5E7EB;border-radius:2px;
+  margin:14px auto 0;
+}
+
+/* Header text */
+.sheet-head{
+  text-align:center;
+  padding:20px 24px 8px;
+}
+.sheet-head h2{
+  font-family:'Sora',sans-serif;font-size:22px;font-weight:700;
+  color:var(--text-1);margin-bottom:5px;
+}
+.sheet-head p{font-size:14px;color:var(--text-3);}
+
+/* Choice cards */
+.cards-wrap{
+  padding:12px 16px 0;
+  display:flex;flex-direction:column;gap:12px;
+}
+
+.choice-card{
+  background:var(--white);
+  border:2px solid #EDE9FE;
+  border-radius:var(--radius-lg);
+  padding:20px 18px;
+  display:flex;align-items:center;gap:16px;
+  cursor:pointer;
+  transition:border-color 0.2s,box-shadow 0.2s,transform 0.18s;
+  position:relative;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.choice-card::before{
+  content:'';position:absolute;inset:0;
+  background:var(--gradient);opacity:0;
+  transition:opacity 0.2s;
+}
+.choice-card:active{
+  transform:scale(0.98);
+  border-color:var(--primary);
+  box-shadow:0 4px 24px rgba(91,91,219,0.18);
+}
+
+.card-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:var(--surface-2);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:background 0.2s;
+}
+.card-icon svg{
+  width:26px;height:26px;fill:none;
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+}
+.choice-card:nth-child(1) .card-icon svg{stroke:var(--primary);}
+.choice-card:nth-child(2) .card-icon svg{stroke:var(--secondary);}
+.choice-card:nth-child(2) .card-icon{background:#F0F4FF;}
+
+.card-text{flex:1;}
+.card-title{
+  font-family:'Sora',sans-serif;font-size:17px;font-weight:600;
+  color:var(--text-1);margin-bottom:4px;
+}
+.card-sub{font-size:14px;color:var(--text-3);line-height:1.4;}
+
+.card-chevron svg{
+  width:20px;height:20px;stroke:var(--accent);fill:none;
+  stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+  transition:stroke 0.2s,transform 0.2s;
+}
+.choice-card:active .card-chevron svg{
+  stroke:var(--primary);transform:translateX(3px);
+}
+
+/* Ripple */
+.ripple{
+  position:absolute;border-radius:50%;
+  background:rgba(91,91,219,0.1);
+  transform:scale(0);animation:rippleAnim 0.5s ease-out;
+  pointer-events:none;
+}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+</style>
+</head>
+<body>
+
+<div class="bg-page"></div>
+<div class="overlay" id="overlay" onclick="dismiss()"></div>
+
+<div class="sheet" id="sheet">
+  <div class="drag-handle" id="dragHandle"></div>
+
+  <div class="sheet-head">
+    <h2>Create</h2>
+    <p>What do you want to share?</p>
+  </div>
+
+  <div class="cards-wrap">
+
+    <!-- Feed Content -->
+    <div class="choice-card" id="feedCard" onclick="goTo('upload-feed.html')">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="4" rx="1"/>
+          <rect x="3" y="10" width="18" height="4" rx="1"/>
+          <rect x="3" y="17" width="12" height="4" rx="1"/>
+        </svg>
+      </div>
+      <div class="card-text">
+        <div class="card-title">Feed Content</div>
+        <div class="card-sub">Share a tweet (text) or a post (image)</div>
+      </div>
+      <div class="card-chevron">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+
+    <!-- Academic Resource -->
+    <div class="choice-card" id="resCard" onclick="goTo('upload-resource.html')">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+      </div>
+      <div class="card-text">
+        <div class="card-title">Academic Resource</div>
+        <div class="card-sub">Upload notes as PDF or text format</div>
+      </div>
+      <div class="card-chevron">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ── SWIPE DOWN TO DISMISS ── */
+const sheet = document.getElementById('sheet');
+const overlay = document.getElementById('overlay');
+let startY = 0, isDragging = false, currentDY = 0;
+
+sheet.addEventListener('touchstart', e => {
+  startY = e.touches[0].clientY;
+  isDragging = true;
+  sheet.style.transition = 'none';
+}, { passive: true });
+
+sheet.addEventListener('touchmove', e => {
+  if (!isDragging) return;
+  const dy = e.touches[0].clientY - startY;
+  if (dy < 0) return; // no upward drag
+  currentDY = dy;
+  sheet.style.transform = `translateX(-50%) translateY(${dy}px)`;
+  overlay.style.opacity = Math.max(0, 1 - dy / 300);
+}, { passive: true });
+
+sheet.addEventListener('touchend', () => {
+  isDragging = false;
+  sheet.style.transition = 'transform 0.3s cubic-bezier(0.4,0,0.6,1)';
+  if (currentDY > 100) { dismiss(); }
+  else {
+    sheet.style.transform = 'translateX(-50%) translateY(0)';
+    overlay.style.opacity = 1;
+  }
+  currentDY = 0;
+});
+
+function dismiss() {
+  sheet.classList.add('closing');
+  overlay.classList.add('closing');
+  setTimeout(() => {
+    // Go back to previous page (feed by default)
+    if (document.referrer && !document.referrer.includes('upload')) {
+      history.back();
+    } else {
+      window.location.href = 'feed.html';
+    }
+  }, 280);
+}
+
+function goTo(url) {
+  // Ripple on card
+  sheet.classList.add('closing');
+  overlay.classList.add('closing');
+  setTimeout(() => { window.location.href = url; }, 180);
+}
+
+/* ── RIPPLE EFFECT ── */
+document.querySelectorAll('.choice-card').forEach(card => {
+  card.addEventListener('touchstart', e => {
+    const r = document.createElement('div');
+    r.className = 'ripple';
+    const rect = card.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2;
+    r.style.cssText = `width:${size}px;height:${size}px;left:${e.touches[0].clientX - rect.left - size/2}px;top:${e.touches[0].clientY - rect.top - size/2}px;`;
+    card.appendChild(r);
+    r.addEventListener('animationend', () => r.remove());
+  }, { passive: true });
+});
+</script>
+</body>
+</html>
