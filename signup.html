@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Twinkle — Create Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --primary:    #5B5BDB;
+    --secondary:  #8A8FE8;
+    --accent:     #C7C2F0;
+    --surface:    #F5F4FF;
+    --surface-2:  #EDE9FE;
+    --white:      #FFFFFF;
+    --text-1:     #1A1A2E;
+    --text-2:     #374151;
+    --text-3:     #6B7280;
+    --text-4:     #9CA3AF;
+    --success:    #22C55E;
+    --warning:    #F59E0B;
+    --error:      #EF4444;
+    --border:     #E5E7EB;
+    --shadow-sm:  0 2px 8px rgba(91,91,219,0.08);
+    --shadow-md:  0 4px 32px rgba(91,91,219,0.10);
+    --radius-md:  14px;
+    --radius-lg:  20px;
+    --radius-xl:  24px;
+    --radius-full:100px;
+    --gradient:   linear-gradient(135deg,#5B5BDB 0%,#8A8FE8 100%);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #F7F6FF;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  /* ---- APP SHELL ---- */
+  .app {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100dvh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .app::before {
+    content: '';
+    position: fixed;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 340px; height: 340px;
+    background: radial-gradient(circle, rgba(91,91,219,0.07) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ---- TOAST ---- */
+  .toast {
+    position: fixed;
+    top: calc(env(safe-area-inset-top,0px) + 16px);
+    left: 50%; transform: translateX(-50%) translateY(-90px);
+    z-index: 999;
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 20px;
+    border-radius: var(--radius-full);
+    font-size: 14px; font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    transition: transform 0.4s cubic-bezier(0.34,1.4,0.64,1);
+    pointer-events: none;
+  }
+  .toast.show   { transform: translateX(-50%) translateY(0); }
+  .toast.success{ background:#F0FDF4; color:#16A34A; border:1px solid #BBF7D0; }
+  .toast.error  { background:#FEF2F2; color:#DC2626; border:1px solid #FECACA; }
+  .toast svg    { width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0; }
+
+  /* ---- CELEBRATION OVERLAY ---- */
+  .celebrate {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #5B5BDB 0%, #8A8FE8 100%);
+    z-index: 1000;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  .celebrate.show { opacity: 1; pointer-events: all; }
+  .celebrate-icon { font-size: 64px; animation: popIn 0.5s cubic-bezier(0.34,1.6,0.64,1); }
+  .celebrate-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 28px; font-weight: 700; color: white;
+    animation: popIn 0.5s cubic-bezier(0.34,1.6,0.64,1) 0.1s both;
+  }
+  .celebrate-sub {
+    font-size: 15px; color: rgba(255,255,255,0.8);
+    animation: popIn 0.5s ease 0.2s both;
+  }
+
+  /* Confetti dots */
+  .confetti-dot {
+    position: absolute;
+    width: 8px; height: 8px; border-radius: 50%;
+    animation: confettiFall 1s ease both;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity:1; }
+    100% { transform: translateY(200px) rotate(360deg); opacity:0; }
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.6); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  /* ---- SCROLL CONTENT ---- */
+  .scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex; flex-direction: column;
+    padding: calc(env(safe-area-inset-top,0px) + 52px) 0 calc(env(safe-area-inset-bottom,0px) + 40px);
+    position: relative; z-index: 1;
+  }
+
+  /* ---- LOGO ---- */
+  .logo-section {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 24px 24px;
+    animation: fadeUp 0.45s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .logo-icon {
+    width:56px;height:56px; border-radius:16px; object-fit:cover;
+    box-shadow:0 8px 24px rgba(91,91,219,0.20); margin-bottom:12px;
+  }
+  .logo-wordmark {
+    font-family:'Sora',sans-serif; font-size:26px; font-weight:700;
+    color:var(--primary); margin-bottom:4px; letter-spacing:-0.4px;
+  }
+  .logo-sub { font-size:14px; color:var(--text-3); }
+
+  /* ---- AVATAR UPLOAD ---- */
+  .avatar-section {
+    display: flex; flex-direction: column; align-items: center;
+    margin-bottom: 20px;
+    animation: fadeUp 0.45s ease 0.06s both;
+  }
+
+  .avatar-ring {
+    position: relative;
+    width: 92px; height: 92px;
+    cursor: pointer;
+  }
+
+  .avatar-circle {
+    width: 92px; height: 92px; border-radius: 50%;
+    border: 2px dashed var(--accent);
+    background: var(--surface);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: border-color 0.25s, background 0.25s, transform 0.2s;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .avatar-ring:active .avatar-circle { transform: scale(0.96); }
+  .avatar-ring:hover .avatar-circle  { border-color: var(--primary); background: var(--surface-2); }
+
+  .avatar-photo {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    display: none;
+  }
+
+  .avatar-camera-icon {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    z-index: 1; pointer-events: none;
+  }
+
+  .avatar-camera-icon svg {
+    width: 24px; height: 24px;
+    stroke: var(--secondary); fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  /* Green verified badge */
+  .avatar-badge {
+    position: absolute; bottom: 2px; right: 2px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--success);
+    border: 2.5px solid white;
+    display: none; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(34,197,94,0.3);
+  }
+  .avatar-badge svg {
+    width:13px;height:13px;stroke:white;fill:none;
+    stroke-width:3;stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  /* Upload progress ring */
+  .upload-ring {
+    position: absolute; inset: -3px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--primary);
+    animation: spin 0.8s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .avatar-label {
+    font-size: 13px; font-weight: 500; color: var(--primary);
+    margin-top: 10px;
+  }
+  .avatar-hint {
+    font-size: 12px; color: var(--text-4); margin-top: 2px;
+  }
+
+  /* ---- FORM CARD ---- */
+  .form-card {
+    margin: 0 20px;
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    border: 1px solid #EDE9FE;
+    box-shadow: var(--shadow-md);
+    display: flex; flex-direction: column; gap: 16px;
+    animation: fadeUp 0.45s ease 0.1s both;
+  }
+
+  /* ---- INPUT GROUP ---- */
+  .input-group { display:flex; flex-direction:column; gap:6px; }
+
+  .input-wrap  { position:relative; display:flex; align-items:center; }
+
+  .input-icon {
+    position:absolute; left:15px; z-index:1;
+    width:18px;height:18px; color:var(--secondary); pointer-events:none;
+  }
+  .input-icon svg {
+    width:18px;height:18px;stroke:currentColor;fill:none;
+    stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  .input-eye {
+    position:absolute; right:14px;
+    background:none; border:none; cursor:pointer;
+    color:var(--text-4); display:flex; align-items:center;
+    padding:6px; border-radius:8px; transition:color 0.2s; z-index:2;
+  }
+  .input-eye:hover { color:var(--primary); }
+  .input-eye svg   { width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round; }
+
+  .field-input {
+    width:100%; height:52px;
+    background:#FAFAFA;
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-md);
+    padding:0 16px 0 44px;
+    font-family:'DM Sans',sans-serif; font-size:15px; font-weight:500;
+    color:var(--text-1); outline:none;
+    transition:border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    -webkit-appearance:none;
+  }
+  .field-input::placeholder { color:var(--text-4); font-weight:400; font-size:14px; }
+  .field-input:focus { border-color:var(--primary); background:var(--white); box-shadow:0 0 0 3px rgba(91,91,219,0.10); }
+  .field-input.has-eye { padding-right:48px; }
+  .field-input.error   { border-color:var(--error); background:#FFF8F8; }
+  .field-input.error:focus { box-shadow:0 0 0 3px rgba(239,68,68,0.10); }
+  .field-input.valid   { border-color:var(--success); }
+  .field-input.valid:focus { box-shadow:0 0 0 3px rgba(34,197,94,0.10); }
+
+  /* Username status tag */
+  .uid-status {
+    display:none; align-items:center; gap:5px;
+    font-size:12px; font-weight:500; padding-left:2px;
+    transition: all 0.2s;
+  }
+  .uid-status.show { display:flex; }
+  .uid-status.available { color:var(--success); }
+  .uid-status.taken     { color:var(--error); }
+  .uid-status.checking  { color:var(--text-4); }
+  .uid-status svg { width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round; }
+
+  /* Error msg */
+  .error-msg {
+    display:none; align-items:center; gap:5px;
+    font-size:12px; color:var(--error); padding-left:2px;
+  }
+  .error-msg.show { display:flex; }
+  .error-msg svg  { width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0; }
+
+  /* ---- PASSWORD STRENGTH ---- */
+  .strength-wrap {
+    display:none; flex-direction:column; gap:6px;
+  }
+  .strength-wrap.show { display:flex; }
+
+  .strength-bars {
+    display:flex; gap:5px;
+  }
+  .strength-bar {
+    flex:1; height:4px; border-radius:2px;
+    background:#E5E7EB;
+    transition:background 0.35s ease;
+  }
+  .strength-bar.weak   { background:var(--error); }
+  .strength-bar.fair   { background:var(--warning); }
+  .strength-bar.strong { background:var(--success); }
+
+  .strength-label {
+    font-size:12px; font-weight:500;
+    transition:color 0.3s;
+  }
+  .strength-label.weak   { color:var(--error); }
+  .strength-label.fair   { color:var(--warning); }
+  .strength-label.strong { color:var(--success); }
+
+  /* ---- SECTION LABEL ---- */
+  .section-label {
+    font-size:11px; font-weight:600; color:var(--text-4);
+    letter-spacing:0.05em; text-transform:uppercase;
+    padding: 4px 2px 0;
+  }
+
+  /* ---- PRIMARY BUTTON ---- */
+  .btn-primary {
+    width:100%; height:56px;
+    border:none; border-radius:var(--radius-md);
+    background:var(--gradient); color:var(--white);
+    font-family:'Sora',sans-serif; font-size:16px; font-weight:600;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+    box-shadow:0 4px 18px rgba(91,91,219,0.30);
+    transition:transform 0.18s,box-shadow 0.18s,background 0.3s,opacity 0.2s;
+    position:relative; overflow:hidden; -webkit-appearance:none;
+  }
+  .btn-primary::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,0.14) 0%,transparent 55%);
+    border-radius:inherit;
+  }
+  .btn-primary:active:not(:disabled) { transform:scale(0.97); }
+  .btn-primary:disabled { opacity:0.45; cursor:not-allowed; }
+  .btn-primary.loading  { opacity:0.7; pointer-events:none; }
+  .btn-primary.loading .btn-label { display:none; }
+  .btn-primary.loading .spinner   { display:block; }
+  .btn-primary.success-state { background:var(--success) !important; box-shadow:0 4px 18px rgba(34,197,94,0.3) !important; }
+
+  .spinner {
+    width:22px;height:22px;
+    border:2.5px solid rgba(255,255,255,0.3);
+    border-top-color:white; border-radius:50%;
+    animation:spin 0.7s linear infinite; display:none;
+  }
+
+  /* ---- GOOGLE BUTTON ---- */
+  .btn-google {
+    width:100%; height:56px;
+    border:1.5px solid var(--border); border-radius:var(--radius-md);
+    background:var(--white); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; color:var(--text-1);
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    transition:transform 0.18s,box-shadow 0.18s,border-color 0.2s;
+    -webkit-appearance:none;
+  }
+  .btn-google:active  { transform:scale(0.97); }
+  .btn-google:hover   { border-color:#C7C2F0; box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+  .btn-google.loading { opacity:0.6; pointer-events:none; }
+  .google-icon { width:22px;height:22px;flex-shrink:0; }
+
+  /* ---- DIVIDER ---- */
+  .divider { display:flex; align-items:center; gap:12px; }
+  .divider-line { flex:1; height:1px; background:var(--border); }
+  .divider-text { font-size:13px; color:var(--text-4); white-space:nowrap; }
+
+  /* ---- LOGIN LINK ---- */
+  .login-link {
+    text-align:center; font-size:14px; color:var(--text-3);
+    margin-top:20px; padding:0 24px;
+    animation: fadeUp 0.45s ease 0.2s both;
+    padding-bottom: 8px;
+  }
+  .login-link a {
+    color:var(--primary); font-weight:600; text-decoration:none;
+    border-bottom:1.5px solid rgba(91,91,219,0.3);
+    transition:border-color 0.2s;
+  }
+  .login-link a:hover { border-color:var(--primary); }
+
+  /* ---- TERMS NOTE ---- */
+  .terms-note {
+    text-align:center; font-size:12px; color:var(--text-4);
+    line-height:1.5; padding: 0 32px;
+    animation: fadeUp 0.45s ease 0.25s both;
+  }
+  .terms-note a { color:var(--primary); text-decoration:none; font-weight:500; }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg id="toastIcon" viewBox="0 0 24 24"></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- CELEBRATION OVERLAY -->
+<div class="celebrate" id="celebrate">
+  <div class="celebrate-icon">🎉</div>
+  <div class="celebrate-title">Account Created!</div>
+  <div class="celebrate-sub">Setting up your profile...</div>
+</div>
+
+<div class="app">
+  <div class="scroll-content">
+
+    <!-- LOGO -->
+    <div class="logo-section">
+      <img src="https://i.ibb.co/Mxgv1xhV/20260402-091213.png" alt="Twinkle" class="logo-icon"
+           onerror="this.style.background='#5B5BDB';this.style.borderRadius='16px';">
+      <div class="logo-wordmark">Twinkle</div>
+      <div class="logo-sub">Create your Twinkle account</div>
+    </div>
+
+    <!-- AVATAR UPLOAD -->
+    <div class="avatar-section">
+      <div class="avatar-ring" onclick="triggerAvatarUpload()">
+        <div class="avatar-circle" id="avatarCircle">
+          <div class="upload-ring" id="uploadRing"></div>
+          <img id="avatarPhoto" class="avatar-photo" alt="Profile photo">
+          <div class="avatar-camera-icon" id="cameraIcon">
+            <svg viewBox="0 0 24 24">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span style="font-size:11px;color:var(--secondary);font-weight:500;">Photo</span>
+          </div>
+        </div>
+        <div class="avatar-badge" id="avatarBadge">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+      <div class="avatar-label" id="avatarLabel">Upload Profile Photo</div>
+      <div class="avatar-hint">Max 5MB · JPG or PNG</div>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card">
+
+      <div class="section-label">Personal Info</div>
+
+      <!-- Full Name -->
+      <div class="input-group">
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <input type="text" class="field-input" id="nameInput" placeholder="Full name"
+                 autocomplete="name" oninput="clearErr('nameInput','nameError')">
+        </div>
+        <div class="error-msg" id="nameError">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Please enter your full name</span>
+        </div>
+      </div>
+
+      <!-- User ID -->
+      <div class="input-group">
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
+          </span>
+          <input type="text" class="field-input" id="uidInput" placeholder="Choose a unique @username"
+                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                 oninput="onUidInput(this.value)" maxlength="30">
+        </div>
+        <!-- UID status -->
+        <div class="uid-status checking" id="uidStatus">
+          <svg viewBox="0 0 24 24" id="uidStatusIcon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="uidStatusText">checking...</span>
+        </div>
+        <div class="error-msg" id="uidError">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="uidErrorMsg">Please choose a username</span>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="input-group">
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+          </span>
+          <input type="email" class="field-input" id="emailInput" placeholder="Email address"
+                 autocomplete="email" inputmode="email" oninput="clearErr('emailInput','emailError')">
+        </div>
+        <div class="error-msg" id="emailError">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="emailErrorMsg">Please enter a valid email</span>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:2px;">Security</div>
+
+      <!-- Password -->
+      <div class="input-group">
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <input type="password" class="field-input has-eye" id="passwordInput"
+                 placeholder="Create a password"
+                 autocomplete="new-password"
+                 oninput="onPasswordInput(this.value)">
+          <button class="input-eye" type="button" onclick="toggleEye('passwordInput','eyeIcon1')" aria-label="Show password">
+            <svg id="eyeIcon1" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <!-- Strength meter -->
+        <div class="strength-wrap" id="strengthWrap">
+          <div class="strength-bars">
+            <div class="strength-bar" id="bar1"></div>
+            <div class="strength-bar" id="bar2"></div>
+            <div class="strength-bar" id="bar3"></div>
+          </div>
+          <span class="strength-label" id="strengthLabel">Weak</span>
+        </div>
+        <div class="error-msg" id="passwordError">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="passwordErrorMsg">Password must be at least 6 characters</span>
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="input-group">
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <input type="password" class="field-input has-eye" id="confirmInput"
+                 placeholder="Confirm password"
+                 autocomplete="new-password"
+                 oninput="clearErr('confirmInput','confirmError')">
+          <button class="input-eye" type="button" onclick="toggleEye('confirmInput','eyeIcon2')" aria-label="Show password">
+            <svg id="eyeIcon2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="error-msg" id="confirmError">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="confirmErrorMsg">Passwords do not match</span>
+        </div>
+      </div>
+
+      <!-- Signup button -->
+      <button class="btn-primary" id="signupBtn" onclick="signupUser()">
+        <span class="btn-label">Create Account</span>
+        <div class="spinner"></div>
+      </button>
+
+      <!-- Divider -->
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <!-- Google -->
+      <button class="btn-google" id="googleBtn" onclick="signupGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+    </div><!-- /form-card -->
+
+    <p class="login-link">
+      Already have an account? <a href="login.html">Log In</a>
+    </p>
+
+    <p class="terms-note">
+      By creating an account you agree to our
+      <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+    </p>
+
+  </div>
+</div>
+
+<!-- Cloudinary widget -->
+<script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth, createUserWithEmailAndPassword,
+    GoogleAuthProvider, signInWithPopup,
+    updateProfile, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, doc, setDoc, getDoc,
+    collection, query, where, getDocs, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDIAPr5dXMoWsgHNMGON1RG6rhxi1ccQUw",
+    authDomain: "twinkle-7dd5f.firebaseapp.com",
+    databaseURL: "https://twinkle-7dd5f-default-rtdb.firebaseio.com",
+    projectId: "twinkle-7dd5f",
+    storageBucket: "twinkle-7dd5f.firebasestorage.app",
+    messagingSenderId: "584206668657",
+    appId: "1:584206668657:web:3bbb1ae83ecd892b50dcd0",
+    measurementId: "G-GS6XV7D1D8"
+  };
+
+  const fbApp  = initializeApp(firebaseConfig);
+  const auth   = getAuth(fbApp);
+  const db     = getFirestore(fbApp);
+  const gprov  = new GoogleAuthProvider();
+
+  // If already logged in → redirect
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const snap = await getDoc(doc(db,"users",user.uid));
+      window.location.href = (snap.exists() && snap.data().academicProfileComplete)
+        ? "feed.html" : "profile-form.html";
+    }
+  });
+
+  /* ——— Check username availability ——— */
+  window._checkUid = async function(uid) {
+    if (!uid || uid.length < 3) return null;
+    const q = query(collection(db,"users"), where("userId","==", uid.toLowerCase()));
+    const snap = await getDocs(q);
+    return snap.empty; // true = available
+  };
+
+  /* ——— Signup ——— */
+  window.signupUser = async function() {
+    const name     = document.getElementById('nameInput').value.trim();
+    const uid      = document.getElementById('uidInput').value.trim().toLowerCase();
+    const email    = document.getElementById('emailInput').value.trim();
+    const password = document.getElementById('passwordInput').value;
+    const confirm  = document.getElementById('confirmInput').value;
+    const photoURL = window._uploadedPhotoURL || '';
+
+    let valid = true;
+
+    if (!name) { showFieldErr('nameInput','nameError','Please enter your full name'); valid=false; }
+
+    if (!uid || uid.length < 3) {
+      showFieldErr('uidInput','uidError','Username must be at least 3 characters'); valid=false;
+    } else if (window._uidAvailable === false) {
+      showFieldErr('uidInput','uidError','This username is already taken'); valid=false;
+    } else if (window._uidAvailable === null) {
+      showFieldErr('uidInput','uidError','Please wait for username check'); valid=false;
+    }
+
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      showFieldErr('emailInput','emailError','Please enter a valid email address'); valid=false;
+    }
+
+    if (!password || password.length < 6) {
+      showFieldErr('passwordInput','passwordError','Password must be at least 6 characters'); valid=false;
+    }
+
+    if (password !== confirm) {
+      showFieldErr('confirmInput','confirmError','Passwords do not match'); valid=false;
+    }
+
+    if (!valid) return;
+
+    const btn = document.getElementById('signupBtn');
+    setLoading(btn, true);
+
+    try {
+      // Double-check uid availability
+      const available = await window._checkUid(uid);
+      if (!available) {
+        setLoading(btn, false);
+        showFieldErr('uidInput','uidError','This username was just taken. Try another.');
+        return;
+      }
+
+      // Create account
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      const user = cred.user;
+
+      // Update Firebase display name + photo
+      await updateProfile(user, { displayName: name, photoURL: photoURL || '' });
+
+      // Save user doc to Firestore
+      await setDoc(doc(db,"users",user.uid), {
+        uid:         user.uid,
+        displayName: name,
+        userId:      uid,
+        email:       email,
+        photoURL:    photoURL || '',
+        createdAt:   serverTimestamp(),
+        academicProfileComplete: false,
+        profilePhotoUploadedAt:  photoURL ? serverTimestamp() : null,
+        beams:       0,
+        tracing:     0,
+        circleCount: 0,
+        isBlocked:   false,
+        blueTick:    false,
+      });
+
+      // Show celebration
+      showCelebration();
+      setTimeout(() => { window.location.href = 'profile-form.html'; }, 1600);
+
+    } catch (err) {
+      setLoading(btn, false);
+      const msg = parseError(err.code);
+      if (err.code === 'auth/email-already-in-use') {
+        showFieldErr('emailInput','emailError', msg);
+      } else {
+        showToast('error', msg);
+      }
+    }
+  };
+
+  /* ——— Google Signup ——— */
+  window.signupGoogle = async function() {
+    const btn = document.getElementById('googleBtn');
+    btn.classList.add('loading');
+
+    try {
+      const result = await signInWithPopup(auth, gprov);
+      const user = result.user;
+      const snap = await getDoc(doc(db,"users",user.uid));
+
+      if (!snap.exists()) {
+        // Generate default userId from display name
+        const baseUid = (user.displayName||'user').toLowerCase().replace(/\s+/g,'').substring(0,20)
+          + Math.floor(Math.random()*999);
+        await setDoc(doc(db,"users",user.uid), {
+          uid:         user.uid,
+          displayName: user.displayName || '',
+          userId:      baseUid,
+          email:       user.email,
+          photoURL:    user.photoURL || '',
+          createdAt:   serverTimestamp(),
+          academicProfileComplete: false,
+          beams:0, tracing:0, circleCount:0,
+          isBlocked:false, blueTick:false,
+        });
+      }
+      showCelebration();
+      setTimeout(() => {
+        const dest = (snap.exists() && snap.data().academicProfileComplete)
+          ? 'feed.html' : 'profile-form.html';
+        window.location.href = dest;
+      }, 1400);
+    } catch (err) {
+      btn.classList.remove('loading');
+      btn.innerHTML = `<svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Continue with Google`;
+      if (err.code !== 'auth/popup-closed-by-user') showToast('error','Google sign-in failed.');
+    }
+  };
+
+  function parseError(code) {
+    const map = {
+      'auth/email-already-in-use': 'This email is already registered',
+      'auth/invalid-email':        'Please enter a valid email address',
+      'auth/weak-password':        'Password must be at least 6 characters',
+      'auth/network-request-failed':'No internet connection',
+    };
+    return map[code] || 'Something went wrong. Please try again';
+  }
+
+  function setLoading(btn, v) {
+    btn.classList.toggle('loading', v);
+    btn.disabled = v;
+  }
+
+  function showFieldErr(inputId, errId, msg) {
+    const inp = document.getElementById(inputId);
+    const err = document.getElementById(errId);
+    inp.classList.add('error');
+    const span = err.querySelector('span');
+    if (span) span.textContent = msg;
+    err.classList.add('show');
+  }
+  window.showFieldErr = showFieldErr;
+
+  function showCelebration() {
+    const el = document.getElementById('celebrate');
+    el.classList.add('show');
+    // Confetti dots
+    const colors = ['#5B5BDB','#8A8FE8','#F59E0B','#22C55E','#C7C2F0','#EF4444'];
+    for (let i=0;i<22;i++) {
+      const d = document.createElement('div');
+      d.className = 'confetti-dot';
+      d.style.cssText = `
+        left:${10 + Math.random()*80}%;
+        top:${10 + Math.random()*40}%;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        animation-delay:${Math.random()*0.4}s;
+        animation-duration:${0.8+Math.random()*0.6}s;
+        width:${6+Math.random()*8}px; height:${6+Math.random()*8}px;
+      `;
+      el.appendChild(d);
+    }
+  }
+
+  function showToast(type, msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    document.getElementById('toastIcon').innerHTML = type==='success'
+      ? '<polyline points="20 6 9 17 4 12"/>'
+      : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+    t.className = `toast ${type}`;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('show'), 3200);
+  }
+  window.showToast = showToast;
+</script>
+
+<script>
+  /* ============================================================
+     UI HELPERS
+  ============================================================ */
+  let _uidDebounce = null;
+  let _uidAvailable = null;
+  window._uidAvailable = null;
+  window._uploadedPhotoURL = '';
+
+  /* ---- Username input handler ---- */
+  function onUidInput(raw) {
+    clearErr('uidInput','uidError');
+    // Sanitize: lowercase, no spaces, only alphanum + underscore
+    const clean = raw.toLowerCase().replace(/[^a-z0-9_]/g,'');
+    const inp = document.getElementById('uidInput');
+    if (inp.value !== clean) { inp.value = clean; }
+
+    const status = document.getElementById('uidStatus');
+    const ico    = document.getElementById('uidStatusIcon');
+    const txt    = document.getElementById('uidStatusText');
+    window._uidAvailable = null;
+
+    if (!clean || clean.length < 3) {
+      status.classList.remove('show');
+      return;
+    }
+
+    // Show checking
+    status.className = 'uid-status checking show';
+    ico.innerHTML = `<line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>`;
+    txt.textContent = 'Checking availability...';
+    inp.classList.remove('error','valid');
+
+    clearTimeout(_uidDebounce);
+    _uidDebounce = setTimeout(async () => {
+      if (typeof window._checkUid !== 'function') {
+        status.className = 'uid-status checking show';
+        ico.innerHTML = `<line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>`;
+        txt.textContent = 'Checking availability...';
+        return;
+      }
+      const available = await window._checkUid(clean);
+      window._uidAvailable = available;
+      if (available) {
+        status.className = 'uid-status available show';
+        ico.innerHTML = `<polyline points="20 6 9 17 4 12"/>`;
+        txt.textContent = '@' + clean + ' is available';
+        inp.classList.add('valid');
+      } else {
+        status.className = 'uid-status taken show';
+        ico.innerHTML = `<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>`;
+        txt.textContent = 'This ID is taken';
+        inp.classList.add('error');
+      }
+    }, 500);
+  }
+
+  /* ---- Password strength ---- */
+  function onPasswordInput(val) {
+    clearErr('passwordInput','passwordError');
+    const wrap = document.getElementById('strengthWrap');
+    if (!val) { wrap.classList.remove('show'); return; }
+    wrap.classList.add('show');
+
+    const score = getPasswordStrength(val);
+    const b1=document.getElementById('bar1');
+    const b2=document.getElementById('bar2');
+    const b3=document.getElementById('bar3');
+    const lbl=document.getElementById('strengthLabel');
+
+    b1.className='strength-bar'; b2.className='strength-bar'; b3.className='strength-bar';
+
+    if (score === 1) {
+      b1.classList.add('weak');
+      lbl.textContent='Weak'; lbl.className='strength-label weak';
+    } else if (score === 2) {
+      b1.classList.add('fair'); b2.classList.add('fair');
+      lbl.textContent='Fair'; lbl.className='strength-label fair';
+    } else {
+      b1.classList.add('strong'); b2.classList.add('strong'); b3.classList.add('strong');
+      lbl.textContent='Strong'; lbl.className='strength-label strong';
+    }
+  }
+
+  function getPasswordStrength(p) {
+    let score = 0;
+    if (p.length >= 6)  score++;
+    if (p.length >= 10 && /[A-Z]/.test(p) && /[0-9]/.test(p)) score++;
+    if (p.length >= 12 && /[!@#$%^&*()_+\-=\[\]{}]/.test(p)) score++;
+    return Math.max(1, score);
+  }
+
+  /* ---- Eye toggle ---- */
+  function toggleEye(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon  = document.getElementById(iconId);
+    const isPass = input.type === 'password';
+    input.type = isPass ? 'text' : 'password';
+    icon.innerHTML = isPass
+      ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
+      : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+  }
+
+  /* ---- Clear error ---- */
+  function clearErr(inputId, errId) {
+    document.getElementById(inputId).classList.remove('error');
+    document.getElementById(errId).classList.remove('show');
+  }
+
+  /* ---- Avatar / Cloudinary upload ---- */
+  function triggerAvatarUpload() {
+    // Check file size via Cloudinary widget
+    const widget = cloudinary.createUploadWidget({
+      cloudName:    'dh7iftwxa',
+      uploadPreset: 'unsigned_upload',
+      folder:       'twinkle/avatars',
+      sources:      ['local','camera'],
+      cropping:     true,
+      croppingAspectRatio: 1,
+      showSkipCropButton: false,
+      maxFileSize:  5242880, // 5MB
+      clientAllowedFormats: ['jpg','jpeg','png'],
+      styles: {
+        palette: {
+          window: '#FFFFFF',
+          windowBorder: '#EDE9FE',
+          tabIcon: '#5B5BDB',
+          menuIcons: '#5B5BDB',
+          textDark: '#1A1A2E',
+          textLight: '#FFFFFF',
+          link: '#5B5BDB',
+          action: '#5B5BDB',
+          inactiveTabIcon: '#9CA3AF',
+          error: '#EF4444',
+          inProgress: '#5B5BDB',
+          complete: '#22C55E',
+          sourceBg: '#F5F4FF',
+        },
+        fonts: { default: { active: true } }
+      }
+    }, (error, result) => {
+      if (error) {
+        showToast('error', 'Upload failed. Please try again.');
+        return;
+      }
+      if (result && result.event === 'upload-added') {
+        document.getElementById('uploadRing').style.display = 'block';
+      }
+      if (result && result.event === 'success') {
+        document.getElementById('uploadRing').style.display = 'none';
+        const url = result.info.secure_url;
+        window._uploadedPhotoURL = url;
+        // Show photo
+        const photo = document.getElementById('avatarPhoto');
+        photo.src = url;
+        photo.style.display = 'block';
+        document.getElementById('cameraIcon').style.display = 'none';
+        document.getElementById('avatarBadge').style.display = 'flex';
+        document.getElementById('avatarLabel').textContent = 'Photo uploaded!';
+        document.getElementById('avatarLabel').style.color = 'var(--success)';
+        showToast('success', 'Profile photo uploaded!');
+        widget.close();
+      }
+    });
+    widget.open();
+  }
+
+  // Expose
+  window.onUidInput       = onUidInput;
+  window.onPasswordInput  = onPasswordInput;
+  window.toggleEye        = toggleEye;
+  window.clearErr         = clearErr;
+  window.triggerAvatarUpload = triggerAvatarUpload;
+</script>
+</body>
+</html>
