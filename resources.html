@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Twinkle — Resources</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary:    #5B5BDB;
+  --secondary:  #8A8FE8;
+  --accent:     #C7C2F0;
+  --surface:    #F5F4FF;
+  --surface-2:  #EDE9FE;
+  --white:      #FFFFFF;
+  --text-1:     #1A1A2E;
+  --text-2:     #374151;
+  --text-3:     #6B7280;
+  --text-4:     #9CA3AF;
+  --success:    #22C55E;
+  --warning:    #F59E0B;
+  --error:      #EF4444;
+  --border:     #E5E7EB;
+  --bg:         #F7F6FF;
+  --shadow-sm:  0 2px 16px rgba(91,91,219,0.07);
+  --shadow-md:  0 4px 24px rgba(91,91,219,0.12);
+  --radius-lg:  20px;
+  --radius-full:100px;
+  --gradient:   linear-gradient(135deg,#5B5BDB 0%,#8A8FE8 100%);
+  --nav-h:      72px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow:hidden;}
+
+.app{width:100%;max-width:480px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+
+/* ══ APP BAR ══ */
+.app-bar{
+  flex-shrink:0;background:var(--white);
+  border-bottom:1px solid #F3F4F6;
+  padding-top:env(safe-area-inset-top,0px);z-index:100;
+}
+.app-bar-inner{height:60px;display:flex;align-items:center;padding:0 16px;gap:8px;}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.brand-icon{width:32px;height:32px;border-radius:10px;object-fit:cover;flex-shrink:0;}
+.brand-name{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--primary);letter-spacing:-0.3px;}
+.bar-right{margin-left:auto;display:flex;align-items:center;gap:4px;}
+.icon-btn{width:40px;height:40px;border-radius:12px;background:none;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-1);transition:background 0.18s;}
+.icon-btn:active{background:var(--surface-2);}
+.icon-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ══ SUBHEADER ══ */
+.subheader{
+  background:var(--white);
+  padding:10px 16px 0;
+  border-bottom:1px solid #F3F4F6;
+  flex-shrink:0;
+}
+.subheader-row{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;}
+.subheader-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:var(--text-1);}
+.subheader-meta{font-size:13px;color:var(--text-3);}
+
+/* ══ FILTER CHIPS ══ */
+.filter-row{
+  display:flex;align-items:center;gap:8px;padding:0 16px;height:46px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  background:var(--white);border-bottom:1px solid #F3F4F6;flex-shrink:0;
+}
+.filter-row::-webkit-scrollbar{display:none;}
+.f-chip{
+  flex-shrink:0;height:30px;padding:0 13px;border-radius:var(--radius-full);
+  border:1.5px solid var(--border);background:var(--white);
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  color:var(--text-3);cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;
+  transition:all 0.2s ease;user-select:none;
+}
+.f-chip.active{background:var(--primary);border-color:var(--primary);color:white;font-weight:600;box-shadow:0 2px 10px rgba(91,91,219,0.25);}
+.f-chip:active{transform:scale(0.96);}
+.f-chip svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;}
+
+/* ══ SCROLL AREA ══ */
+.resources-scroll{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  background:var(--bg);
+  padding:10px 0 calc(var(--nav-h) + 12px);
+}
+.resources-scroll::-webkit-scrollbar{display:none;}
+
+/* ══ RESOURCE CARD ══ */
+.res-card{
+  background:var(--white);border-radius:var(--radius-lg);
+  margin:0 14px 12px;
+  box-shadow:var(--shadow-sm);overflow:hidden;
+  animation:cardIn 0.35s ease both;
+  position:relative;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* Card header */
+.res-head{display:flex;align-items:center;padding:12px 14px 8px;gap:9px;}
+.res-avatar{
+  width:36px;height:36px;border-radius:50%;
+  border:2px solid var(--accent);background:var(--surface-2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora',sans-serif;font-size:13px;font-weight:700;
+  color:var(--primary);flex-shrink:0;overflow:hidden;
+  text-decoration:none;cursor:pointer;
+}
+.res-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.res-user-info{flex:1;min-width:0;}
+.res-username{font-family:'Sora',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);cursor:pointer;}
+.res-username:hover{color:var(--primary);}
+.res-user-meta{font-size:11px;color:var(--text-4);margin-top:1px;}
+.res-three-dot{
+  width:32px;height:32px;border-radius:9px;background:none;border:none;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text-4);transition:background 0.18s;flex-shrink:0;
+}
+.res-three-dot:active{background:var(--surface);}
+.res-three-dot svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Thumbnail */
+.res-thumb{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--surface);}
+.res-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.3s ease;}
+.res-card:hover .res-thumb img{transform:scale(1.02);}
+
+/* Placeholder thumb */
+.res-thumb-placeholder{
+  width:100%;aspect-ratio:16/9;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;
+}
+.res-thumb-placeholder.pdf-ph{background:linear-gradient(135deg,#EDE9FE 0%,#DDD8FB 100%);}
+.res-thumb-placeholder.txt-ph{background:linear-gradient(135deg,#E0F2FE 0%,#BAE6FD 100%);}
+.res-thumb-placeholder svg{width:36px;height:36px;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.pdf-ph svg{stroke:#5B5BDB;}
+.txt-ph svg{stroke:#0EA5E9;}
+.res-thumb-placeholder span{font-size:12px;font-weight:600;opacity:0.7;}
+.pdf-ph span{color:#5B5BDB;}
+.txt-ph span{color:#0EA5E9;}
+
+/* Type badge top-right */
+.type-badge{
+  position:absolute;top:10px;right:10px;
+  display:flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:var(--radius-full);
+  font-size:11px;font-weight:600;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.type-badge svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.badge-pdf{background:rgba(237,233,254,0.92);color:#5B5BDB;}
+.badge-txt{background:rgba(224,242,254,0.92);color:#0EA5E9;}
+
+/* Circle overlay */
+.circle-overlay{
+  position:absolute;top:10px;left:10px;
+  background:rgba(91,91,219,0.88);color:white;
+  font-size:10px;font-weight:600;
+  padding:3px 9px;border-radius:var(--radius-full);
+  backdrop-filter:blur(4px);
+}
+
+/* Resource info */
+.res-info{padding:11px 14px 6px;}
+.res-title{
+  font-family:'Sora',sans-serif;font-size:15px;font-weight:600;
+  color:var(--text-1);line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-bottom:5px;
+}
+.res-meta-row{font-size:12px;color:var(--text-3);line-height:1.4;}
+
+/* Action bar */
+.res-actions{
+  display:flex;align-items:center;padding:6px 10px 11px;gap:2px;
+  border-top:1px solid #F9F9FE;margin-top:4px;
+}
+.action-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  gap:5px;padding:7px 4px;border-radius:10px;
+  background:none;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
+  color:var(--text-3);transition:background 0.18s,color 0.18s,transform 0.15s;
+  white-space:nowrap;
+}
+.action-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke 0.2s,fill 0.2s,transform 0.2s;}
+.action-btn:active{transform:scale(0.94);}
+.action-btn.boosted{color:var(--warning);}
+.action-btn.boosted svg{stroke:var(--warning);fill:var(--warning);}
+.action-btn.saved svg{stroke:var(--primary);fill:var(--primary);}
+
+/* Download / View Notes button */
+.dl-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.dl-btn{
+  height:34px;padding:0 14px;
+  border-radius:var(--radius-full);border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  display:flex;align-items:center;gap:6px;
+  transition:all 0.25s ease;white-space:nowrap;
+  position:relative;overflow:hidden;
+}
+.dl-btn.state-default{background:var(--primary);color:white;box-shadow:0 3px 12px rgba(91,91,219,0.3);}
+.dl-btn.state-loading{background:var(--surface-2);color:var(--primary);pointer-events:none;}
+.dl-btn.state-done{background:var(--success);color:white;box-shadow:0 3px 12px rgba(34,197,94,0.28);}
+.dl-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Progress bar inside dl-btn when loading */
+.dl-progress{
+  position:absolute;bottom:0;left:0;height:3px;
+  background:var(--primary);border-radius:0 0 var(--radius-full) var(--radius-full);
+  width:0%;transition:width 0.12s linear;
+}
+
+/* ══ SKELETON ══ */
+.skeleton-card{
+  background:var(--white);border-radius:var(--radius-lg);
+  margin:0 14px 12px;overflow:hidden;box-shadow:var(--shadow-sm);
+}
+.skel{background:linear-gradient(90deg,#F0EFFE 0%,#F9F8FF 50%,#F0EFFE 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px;}
+@keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
+.skel-row{display:flex;align-items:center;gap:10px;padding:12px 14px;}
+.skel-av{width:36px;height:36px;border-radius:50%;flex-shrink:0;}
+.skel-lines{flex:1;display:flex;flex-direction:column;gap:7px;}
+.skel-thumb{width:100%;aspect-ratio:16/9;}
+.skel-info{padding:10px 14px;display:flex;flex-direction:column;gap:7px;}
+
+/* ══ EMPTY / ERROR ══ */
+.empty-state,.error-state{
+  display:none;flex-direction:column;align-items:center;
+  justify-content:center;gap:12px;padding:48px 32px;
+  text-align:center;min-height:360px;
+}
+.empty-state.show,.error-state.show{display:flex;}
+.empty-illus{width:110px;height:110px;margin-bottom:4px;}
+.empty-state h3,.error-state h3{font-family:'Sora',sans-serif;font-size:18px;font-weight:600;color:var(--text-1);}
+.empty-state p,.error-state p{font-size:14px;color:var(--text-3);line-height:1.5;max-width:260px;}
+.btn-upload{
+  margin-top:6px;height:44px;padding:0 24px;
+  border-radius:var(--radius-full);border:none;
+  background:var(--gradient);color:white;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;box-shadow:0 3px 14px rgba(91,91,219,0.28);
+  transition:transform 0.18s,box-shadow 0.18s;
+}
+.btn-upload:active{transform:scale(0.96);}
+.btn-retry{height:40px;padding:0 24px;border-radius:var(--radius-full);border:1.5px solid var(--primary);background:none;color:var(--primary);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+.error-state svg{width:40px;height:40px;stroke:var(--text-4);fill:none;stroke-width:1.5;}
+
+/* ══ LOAD MORE ══ */
+.load-more-wrap{display:none;flex-direction:column;align-items:center;gap:10px;padding:20px 0;}
+.load-more-wrap.show{display:flex;}
+.pulse-ring{width:38px;height:38px;border-radius:50%;border:3px solid var(--accent);border-top-color:var(--primary);animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.load-more-wrap p{font-size:13px;color:var(--text-3);}
+
+/* ══ BOTTOM SHEETS ══ */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:500;opacity:0;pointer-events:none;transition:opacity 0.28s ease;}
+.sheet-overlay.show{opacity:1;pointer-events:all;}
+.bottom-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;background:var(--white);border-radius:28px 28px 0 0;z-index:501;transition:transform 0.38s cubic-bezier(0.34,1.08,0.64,1);padding-bottom:env(safe-area-inset-bottom,0px);}
+.bottom-sheet.show{transform:translateX(-50%) translateY(0);}
+.sheet-drag{width:40px;height:4px;background:#E5E7EB;border-radius:2px;margin:14px auto 0;}
+.menu-options{padding:8px 16px 20px;display:flex;flex-direction:column;gap:4px;}
+.menu-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;cursor:pointer;font-size:15px;font-weight:500;color:var(--text-1);transition:background 0.18s;}
+.menu-item:active{background:var(--surface);}
+.menu-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.menu-item.danger{color:var(--error);}
+
+/* Spread sheet */
+.spread-options{padding:8px 16px 20px;display:flex;flex-direction:column;gap:4px;}
+.spread-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;cursor:pointer;transition:background 0.18s;}
+.spread-item:active{background:var(--surface);}
+.spread-item-icon{width:44px;height:44px;border-radius:12px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.spread-item-icon svg{width:20px;height:20px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.spread-item-text h4{font-size:15px;font-weight:600;color:var(--text-1);}
+.spread-item-text p{font-size:13px;color:var(--text-3);margin-top:1px;}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;top:calc(env(safe-area-inset-top,0px)+12px);left:50%;transform:translateX(-50%) translateY(-80px);z-index:900;display:flex;align-items:center;gap:8px;padding:11px 18px;border-radius:var(--radius-full);font-size:13px;font-weight:500;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.12);transition:transform 0.38s cubic-bezier(0.34,1.4,0.64,1);pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;}
+.toast.info{background:var(--surface-2);color:var(--primary);border:1px solid var(--accent);}
+.toast.error{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;}
+.toast svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ══ BOTTOM NAV ══ */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));background:var(--white);border-top:1px solid #F0F0F5;box-shadow:0 -4px 20px rgba(0,0,0,0.06);display:flex;align-items:flex-start;justify-content:space-around;padding:8px 8px 0;z-index:100;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px 0;position:relative;text-decoration:none;-webkit-tap-highlight-color:transparent;}
+.nav-item svg{width:23px;height:23px;stroke:var(--text-4);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke 0.2s;}
+.nav-item span{font-size:10px;color:var(--text-4);font-weight:500;transition:color 0.2s;}
+.nav-item.active svg{stroke:var(--primary);}
+.nav-item.active span{color:var(--primary);font-weight:600;}
+.nav-dot{position:absolute;top:2px;width:4px;height:4px;border-radius:50%;background:var(--primary);display:none;}
+.nav-item.active .nav-dot{display:block;}
+.nav-upload{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:2px 4px 0;text-decoration:none;-webkit-tap-highlight-color:transparent;}
+.nav-upload-icon{width:48px;height:48px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(91,91,219,0.35);margin-top:-14px;transition:transform 0.18s;}
+.nav-upload-icon:active{transform:scale(0.94);}
+.nav-upload-icon svg{width:22px;height:22px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.nav-upload span{font-size:10px;color:var(--text-4);font-weight:500;}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg id="toastIco" viewBox="0 0 24 24"></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- 3-DOT MENU SHEET -->
+<div class="sheet-overlay" id="menuOverlay" onclick="closeSheet('menu')"></div>
+<div class="bottom-sheet" id="menuSheet">
+  <div class="sheet-drag"></div>
+  <div class="menu-options">
+    <div class="menu-item" onclick="menuAction('notinterested')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      Not interested
+    </div>
+    <div class="menu-item" onclick="menuAction('block')">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      Block this user
+    </div>
+    <div class="menu-item danger" onclick="menuAction('report')">
+      <svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Report resource
+    </div>
+  </div>
+</div>
+
+<!-- SPREAD SHEET -->
+<div class="sheet-overlay" id="spreadOverlay" onclick="closeSheet('spread')"></div>
+<div class="bottom-sheet" id="spreadSheet">
+  <div class="sheet-drag"></div>
+  <div class="sheet-header" style="padding:16px 20px 12px;border-bottom:1px solid #F3F4F6;">
+    <div style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--text-1);">Spread this resource</div>
+    <div style="font-size:13px;color:var(--text-3);margin-top:2px;">Help more students discover this</div>
+  </div>
+  <div class="spread-options">
+    <div class="spread-item" onclick="doSpread('circle')">
+      <div class="spread-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+      <div class="spread-item-text"><h4>Send to Circle</h4><p>Share with your Circle privately</p></div>
+    </div>
+    <div class="spread-item" onclick="doSpread('copy')">
+      <div class="spread-item-icon"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div>
+      <div class="spread-item-text"><h4>Copy Link</h4><p>Copy resource link to clipboard</p></div>
+    </div>
+    <div class="spread-item" onclick="doSpread('native')">
+      <div class="spread-item-icon"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      <div class="spread-item-text"><h4>Share</h4><p>Share via other apps</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- APP BAR -->
+  <div class="app-bar">
+    <div class="app-bar-inner">
+      <a class="brand" href="feed.html">
+        <img src="https://i.ibb.co/Mxgv1xhV/20260402-091213.png" alt="Twinkle" class="brand-icon"
+             onerror="this.style.background='#5B5BDB';this.style.borderRadius='10px';">
+        <span class="brand-name">Twinkle</span>
+      </a>
+      <div class="bar-right">
+        <button class="icon-btn" onclick="location.href='search.html'" aria-label="Search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBHEADER -->
+  <div class="subheader">
+    <div class="subheader-row">
+      <span class="subheader-title">Resources</span>
+      <span class="subheader-meta" id="subMeta">Loading...</span>
+    </div>
+  </div>
+
+  <!-- FILTER CHIPS -->
+  <div class="filter-row">
+    <div class="f-chip active" data-filter="foryou" onclick="setFilter(this)">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      For You
+    </div>
+    <div class="f-chip" data-filter="pdf" onclick="setFilter(this)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      PDF Notes
+    </div>
+    <div class="f-chip" data-filter="text" onclick="setFilter(this)">
+      <svg viewBox="0 0 24 24"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+      Text Notes
+    </div>
+    <div class="f-chip" data-filter="circle" onclick="setFilter(this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+      Your Circle
+    </div>
+    <div class="f-chip" data-filter="trending" onclick="setFilter(this)">
+      <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      Trending
+    </div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="resources-scroll" id="resScroll">
+
+    <!-- Skeletons -->
+    <div id="skeletons">
+      <div class="skeleton-card">
+        <div class="skel-row"><div class="skel skel-av"></div><div class="skel-lines"><div class="skel" style="height:10px;width:55%;"></div><div class="skel" style="height:8px;width:40%;"></div></div></div>
+        <div class="skel skel-thumb"></div>
+        <div class="skel-info"><div class="skel" style="height:12px;width:90%;"></div><div class="skel" style="height:10px;width:65%;"></div><div class="skel" style="height:28px;border-radius:20px;width:100%;"></div></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skel-row"><div class="skel skel-av"></div><div class="skel-lines"><div class="skel" style="height:10px;width:50%;"></div><div class="skel" style="height:8px;width:35%;"></div></div></div>
+        <div class="skel skel-thumb"></div>
+        <div class="skel-info"><div class="skel" style="height:12px;width:80%;"></div><div class="skel" style="height:10px;width:55%;"></div><div class="skel" style="height:28px;border-radius:20px;width:100%;"></div></div>
+      </div>
+    </div>
+
+    <!-- Resource cards -->
+    <div id="resList"></div>
+
+    <!-- Load more -->
+    <div class="load-more-wrap" id="loadMore">
+      <div class="pulse-ring"></div>
+      <p>Finding more resources for you...</p>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <svg class="empty-illus" viewBox="0 0 110 110" fill="none">
+        <circle cx="55" cy="55" r="46" fill="#EDE9FE" opacity="0.55"/>
+        <rect x="28" y="30" width="54" height="50" rx="9" fill="#5B5BDB" opacity="0.12"/>
+        <rect x="34" y="20" width="42" height="54" rx="7" fill="white" stroke="#C7C2F0" stroke-width="1.5"/>
+        <rect x="40" y="30" width="30" height="5" rx="2.5" fill="#EDE9FE"/>
+        <rect x="40" y="40" width="24" height="5" rx="2.5" fill="#EDE9FE"/>
+        <rect x="40" y="50" width="28" height="5" rx="2.5" fill="#EDE9FE"/>
+        <rect x="40" y="60" width="20" height="5" rx="2.5" fill="#EDE9FE"/>
+        <circle cx="76" cy="76" r="16" fill="#5B5BDB"/>
+        <line x1="76" y1="70" x2="76" y2="82" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="70" y1="76" x2="82" y2="76" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <h3>No resources yet</h3>
+      <p>No notes found for your class and board. Be the first to share!</p>
+      <button class="btn-upload" onclick="location.href='upload-hub.html'">
+        Upload Resource
+      </button>
+    </div>
+
+    <!-- Error state -->
+    <div class="error-state" id="errorState">
+      <svg viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+      <h3>No connection</h3>
+      <p>Check your internet and try again.</p>
+      <button class="btn-retry" onclick="loadResources()">Retry</button>
+    </div>
+
+  </div><!-- /resScroll -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a class="nav-item" href="feed.html">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Feed</span>
+    </a>
+    <a class="nav-item active" href="resources.html">
+      <div class="nav-dot"></div>
+      <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span>Resources</span>
+    </a>
+    <a class="nav-upload" href="upload-hub.html">
+      <div class="nav-upload-icon">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <span>Upload</span>
+    </a>
+    <a class="nav-item" href="chat-list.html">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Chat</span>
+    </a>
+    <a class="nav-item" href="profile.html">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, query, where,
+  orderBy, limit, getDocs, doc, getDoc,
+  updateDoc, increment, arrayUnion, arrayRemove
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const cfg = {
+  apiKey:"AIzaSyDIAPr5dXMoWsgHNMGON1RG6rhxi1ccQUw",
+  authDomain:"twinkle-7dd5f.firebaseapp.com",
+  databaseURL:"https://twinkle-7dd5f-default-rtdb.firebaseio.com",
+  projectId:"twinkle-7dd5f",
+  storageBucket:"twinkle-7dd5f.firebasestorage.app",
+  messagingSenderId:"584206668657",
+  appId:"1:584206668657:web:3bbb1ae83ecd892b50dcd0"
+};
+
+const fbApp = initializeApp(cfg);
+const auth  = getAuth(fbApp);
+const db    = getFirestore(fbApp);
+
+let currentUser = null;
+let userData    = null;
+let activeFilter = 'foryou';
+let _activeResId = null;
+
+// ── Auth guard ──
+onAuthStateChanged(auth, async user => {
+  if (!user) { window.location.href='login.html'; return; }
+  currentUser = user;
+  const snap = await getDoc(doc(db,'users',user.uid));
+  if (!snap.exists() || !snap.data().academicProfileComplete) { window.location.href='profile-form.html'; return; }
+  userData = snap.data();
+  window._userData = userData;
+
+  // Dynamic subheader
+  const meta = [
+    userData.classGrade ? 'Class '+userData.classGrade : '',
+    userData.board || ''
+  ].filter(Boolean).join(' · ');
+  document.getElementById('subMeta').textContent = meta ? 'For ' + meta : '';
+
+  loadResources();
+});
+
+// ── LOAD ──
+window.loadResources = async function() {
+  document.getElementById('skeletons').style.display='block';
+  document.getElementById('resList').innerHTML='';
+  document.getElementById('emptyState').classList.remove('show');
+  document.getElementById('errorState').classList.remove('show');
+
+  try {
+    let q = query(collection(db,'resources'), orderBy('createdAt','desc'), limit(40));
+
+    // Filter-specific queries
+    if (activeFilter==='pdf')    q = query(collection(db,'resources'), where('resourceType','==','pdf'),  orderBy('createdAt','desc'), limit(30));
+    if (activeFilter==='text')   q = query(collection(db,'resources'), where('resourceType','==','text'), orderBy('createdAt','desc'), limit(30));
+
+    const snap = await getDocs(q);
+    let resources = [];
+    snap.forEach(d => resources.push({ id:d.id, ...d.data() }));
+
+    const circleIds = userData.circleList || [];
+
+    // Filter circle
+    if (activeFilter==='circle') resources = resources.filter(r => circleIds.includes(r.authorId));
+
+    // Score
+    resources = scoreResources(resources, circleIds);
+
+    document.getElementById('skeletons').style.display='none';
+
+    if (!resources.length) {
+      document.getElementById('emptyState').classList.add('show');
+      return;
+    }
+
+    renderResources(resources);
+
+  } catch(e) {
+    console.error(e);
+    document.getElementById('skeletons').style.display='none';
+    document.getElementById('errorState').classList.add('show');
+  }
+};
+window.loadResources = window.loadResources;
+
+function scoreResources(res, circleIds) {
+  const now = Date.now();
+  return res
+    .map(r => {
+      const boosts   = r.boostCount  || 0;
+      const opinions = r.opinionCount || 0;
+      const downloads= r.downloadCount|| 0;
+      const spreads  = r.spreadCount  || 0;
+      const ts = r.createdAt?.toMillis?.() || (r.createdAt?.seconds*1000) || now;
+      const ageH = (now - ts) / 3600000;
+      const recency = Math.max(0, 1 - ageH / 72);
+
+      let score = (boosts*3) + (opinions*2) + (downloads*2) + (spreads*4) + (recency*20);
+
+      if (circleIds.includes(r.authorId)) score *= 1.6;
+      if (String(r.classGrade) === String(userData.classGrade)) score *= 1.4;
+      if (r.board  === userData.board)  score *= 1.3;
+      if (r.medium === userData.medium) score *= 1.1;
+
+      if (activeFilter==='trending') score = (boosts*3)+(downloads*2)+(spreads*4);
+
+      return { ...r, _score:score, _inCircle:circleIds.includes(r.authorId) };
+    })
+    .sort((a,b) => b._score - a._score);
+}
+
+function renderResources(items) {
+  const list = document.getElementById('resList');
+  items.forEach((r, i) => {
+    const el = document.createElement('div');
+    el.innerHTML = buildResCard(r);
+    const card = el.firstChild;
+    card.style.animationDelay = (i * 0.045)+'s';
+    list.appendChild(card);
+  });
+}
+
+function buildResCard(r) {
+  const isPdf    = r.resourceType === 'pdf';
+  const isCircle = r._inCircle;
+  const initial  = (r.authorName||'U')[0].toUpperCase();
+  const avatar   = r.authorPhoto
+    ? `<img src="${esc(r.authorPhoto)}" alt="" loading="lazy">`
+    : initial;
+  const timeAgo  = getTimeAgo(r.createdAt);
+  const boosted  = (r.boostedBy||[]).includes(currentUser?.uid);
+  const saved    = (r.savedBy||[]).includes(currentUser?.uid);
+  const dlState  = getDownloadState(r.id);
+
+  // Thumbnail
+  const thumbHtml = r.thumbnailUrl
+    ? `<img src="${esc(r.thumbnailUrl)}" alt="${esc(r.title||'')}" loading="lazy">`
+    : `<div class="res-thumb-placeholder ${isPdf?'pdf-ph':'txt-ph'}">
+        ${isPdf
+          ? `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>PDF Notes</span>`
+          : `<svg viewBox="0 0 24 24"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg><span>Text Notes</span>`
+        }
+      </div>`;
+
+  // Download button state
+  let dlHtml = '';
+  if (dlState === 'done') {
+    dlHtml = `<button class="dl-btn state-done" onclick="viewNotes('${r.id}','${esc(r.resourceType)}','${esc(r.driveLink||'')}','${esc(r.textContent||'')}','${esc(r.title||'')}')">
+      <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      View Notes
+    </button>`;
+  } else {
+    dlHtml = `<button class="dl-btn state-default" id="dl-${r.id}" onclick="handleDownload('${r.id}','${esc(r.resourceType)}','${esc(r.driveLink||'')}','${esc(r.textContent||'')}','${esc(r.title||'')}')">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download
+      <div class="dl-progress" id="dlprog-${r.id}"></div>
+    </button>`;
+  }
+
+  const metaParts = [
+    r.classGrade ? 'Class '+r.classGrade : '',
+    r.subject||'',
+    r.board||'',
+    r.medium ? r.medium+' medium' : ''
+  ].filter(Boolean).join(' · ');
+
+  return `
+  <div class="res-card" id="rcard-${r.id}">
+    <div class="res-head">
+      <a class="res-avatar" href="user-profile.html?uid=${esc(r.authorId||'')}">${avatar}</a>
+      <div class="res-user-info">
+        <div class="res-username" onclick="location.href='user-profile.html?uid=${esc(r.authorId||'')}'">
+          ${esc(r.authorName||'Student')}
+        </div>
+        <div class="res-user-meta">${esc(r.classGrade?'Class '+r.classGrade+' · ':'')}${esc(r.subject||'')}${r.board?' · '+esc(r.board):''}</div>
+      </div>
+      <button class="res-three-dot" onclick="openResMenu('${r.id}')" aria-label="Options">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+    </div>
+
+    <div class="res-thumb">
+      ${thumbHtml}
+      <div class="type-badge ${isPdf?'badge-pdf':'badge-txt'}">
+        ${isPdf
+          ? `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> PDF`
+          : `<svg viewBox="0 0 24 24"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg> Text`
+        }
+      </div>
+      ${isCircle ? '<div class="circle-overlay">From Your Circle</div>' : ''}
+    </div>
+
+    <div class="res-info">
+      <div class="res-title">${esc(r.title||'Untitled Resource')}</div>
+      <div class="res-meta-row">${esc(metaParts)}</div>
+    </div>
+
+    <div class="res-actions">
+      <button class="action-btn ${boosted?'boosted':''}" id="rbst-${r.id}" onclick="handleBoost('${r.id}')">
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>${boosted?'Boosted':'Boost'} · ${r.boostCount||0}</span>
+      </button>
+      <button class="action-btn" onclick="openResSpread('${r.id}')">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <span>Spread · ${r.spreadCount||0}</span>
+      </button>
+      <button class="action-btn ${saved?'saved':''}" id="rsave-${r.id}" onclick="handleSave('${r.id}')" aria-label="Save">
+        <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      </button>
+      <div class="dl-wrap">
+        ${dlHtml}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── DOWNLOAD STATE MACHINE ──
+const _downloadedSet = new Set(JSON.parse(localStorage.getItem('twinkle_downloaded')||'[]'));
+
+function getDownloadState(id) {
+  return _downloadedSet.has(id) ? 'done' : 'default';
+}
+
+window.handleDownload = async function(resId, type, driveLink, textContent, title) {
+  const btn  = document.getElementById(`dl-${resId}`);
+  const prog = document.getElementById(`dlprog-${resId}`);
+  if (!btn) return;
+
+  // Switch to loading state
+  btn.className = 'dl-btn state-loading';
+  btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--primary);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;animation:spin 0.7s linear infinite;"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg> Loading...
+  <div class="dl-progress" id="dlprog-${resId}" style="width:0%"></div>`;
+
+  // Animate progress bar 0→100%
+  let pct = 0;
+  const progEl = document.getElementById(`dlprog-${resId}`);
+  const interval = setInterval(() => {
+    pct = Math.min(pct + (Math.random()*18 + 5), 92);
+    if (progEl) progEl.style.width = pct + '%';
+  }, 120);
+
+  try {
+    // Track download
+    await updateDoc(doc(db,'resources',resId), { downloadCount: increment(1) });
+
+    // Simulate fetch delay
+    await new Promise(r => setTimeout(r, 1200 + Math.random()*600));
+
+    clearInterval(interval);
+    if (progEl) progEl.style.width = '100%';
+
+    // Mark as downloaded
+    _downloadedSet.add(resId);
+    localStorage.setItem('twinkle_downloaded', JSON.stringify([..._downloadedSet]));
+
+    await new Promise(r => setTimeout(r, 180));
+
+    // Switch to "View Notes"
+    const dlWrap = btn.closest('.dl-wrap');
+    if (dlWrap) {
+      dlWrap.innerHTML = `<button class="dl-btn state-done" onclick="viewNotes('${resId}','${esc(type)}','${esc(driveLink)}','${esc(textContent)}','${esc(title)}')">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        View Notes
+      </button>`;
+    }
+    showToast('success', 'Ready to view!');
+
+  } catch(e) {
+    clearInterval(interval);
+    if (btn) {
+      btn.className = 'dl-btn state-default';
+      btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download<div class="dl-progress"></div>`;
+    }
+    showToast('error','Download failed. Try again.');
+  }
+};
+
+window.viewNotes = function(resId, type, driveLink, textContent, title) {
+  // Store in sessionStorage for viewer screens
+  sessionStorage.setItem('twinkle_viewer', JSON.stringify({ resId, type, driveLink, textContent, title }));
+  if (type === 'pdf') {
+    window.location.href = 'pdf-viewer.html';
+  } else {
+    window.location.href = 'text-viewer.html';
+  }
+};
+
+// ── BOOST ──
+window.handleBoost = async function(resId) {
+  if (!currentUser) return;
+  const btn = document.getElementById(`rbst-${resId}`);
+  if (!btn) return;
+  const isBoosted = btn.classList.contains('boosted');
+  btn.classList.toggle('boosted',!isBoosted);
+  const sp = btn.querySelector('span');
+  const parts = sp?.textContent.split(' · ') || [];
+  const n = parseInt(parts[1]||0) + (isBoosted?-1:1);
+  if (sp) sp.textContent = (isBoosted?'Boost':'Boosted') + ' · ' + Math.max(0,n);
+  btn.querySelector('svg').style.transform='scale(1.4)';
+  setTimeout(()=>{ if(btn.querySelector('svg')) btn.querySelector('svg').style.transform='scale(1)'; },250);
+  try {
+    const ref = doc(db,'resources',resId);
+    if (isBoosted) await updateDoc(ref,{ boostCount:increment(-1), boostedBy:arrayRemove(currentUser.uid) });
+    else           await updateDoc(ref,{ boostCount:increment(1),  boostedBy:arrayUnion(currentUser.uid)  });
+  } catch { btn.classList.toggle('boosted',isBoosted); }
+};
+
+// ── SAVE ──
+window.handleSave = async function(resId) {
+  if (!currentUser) return;
+  const btn = document.getElementById(`rsave-${resId}`);
+  if (!btn) return;
+  const isSaved = btn.classList.contains('saved');
+  btn.classList.toggle('saved',!isSaved);
+  btn.querySelector('svg').style.transform='scale(1.3)';
+  setTimeout(()=>{ if(btn.querySelector('svg')) btn.querySelector('svg').style.transform='scale(1)'; },200);
+  try {
+    const uRef = doc(db,'users',currentUser.uid);
+    if (isSaved) await updateDoc(uRef,{ savedResources:arrayRemove(resId) });
+    else         await updateDoc(uRef,{ savedResources:arrayUnion(resId)  });
+    showToast('success', isSaved?'Removed from saved':'Resource saved!');
+  } catch {}
+};
+
+// ── SPREAD ──
+let _activeResId2 = null;
+window.openResSpread = function(id) { _activeResId2=id; openSheet('spread'); };
+window.doSpread = async function(type) {
+  closeSheet('spread');
+  if (type==='copy') {
+    try { await navigator.clipboard.writeText(location.origin+'/resource.html?id='+_activeResId2); showToast('success','Link copied!'); } catch {}
+  } else if (type==='native') {
+    try { await navigator.share({ title:'Study resource on Twinkle', url:location.origin+'/resource.html?id='+_activeResId2 }); } catch {}
+  } else {
+    showToast('success','Spread to your Circle!');
+  }
+  try { if(_activeResId2) await updateDoc(doc(db,'resources',_activeResId2),{spreadCount:increment(1)}); } catch {}
+};
+
+// ── MENU ──
+window.openResMenu = function(id) { _activeResId=id; openSheet('menu'); };
+window.menuAction  = function(a)  {
+  closeSheet('menu');
+  if (a==='notinterested') showToast('info','We'll show less like this.');
+  if (a==='block')         showToast('info','User blocked.');
+  if (a==='report')        showToast('success','Report submitted. Thanks!');
+};
+
+function getTimeAgo(ts) {
+  if(!ts) return 'just now';
+  const ms = ts?.toMillis?.() || (ts?.seconds*1000) || Date.now();
+  const diff = Date.now()-ms;
+  const m=Math.floor(diff/60000),h=Math.floor(diff/3600000),d=Math.floor(diff/86400000);
+  if(m<1) return 'just now';if(m<60) return m+'m ago';if(h<24) return h+'h ago';
+  if(d<7) return d+'d ago';
+  return new Date(ms).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+}
+
+function showToast(type,msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastIco').innerHTML=type==='success'?'<polyline points="20 6 9 17 4 12"/>':type==='info'?'<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>':'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+  t.className=`toast ${type}`;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+window.showToast=showToast;
+</script>
+
+<script>
+function esc(s){if(!s)return '';return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+window.esc=esc;
+
+function setFilter(el){
+  document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  window._activeFilter=el.dataset.filter;
+  // Sync with module scope via simple reassign trick
+  if(window.loadResources) window.loadResources();
+}
+window.setFilter=setFilter;
+
+function openSheet(id){
+  document.getElementById(id+'Overlay').classList.add('show');
+  document.getElementById(id+'Sheet').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeSheet(id){
+  document.getElementById(id+'Overlay').classList.remove('show');
+  document.getElementById(id+'Sheet').classList.remove('show');
+  document.body.style.overflow='';
+}
+window.openSheet=openSheet;
+window.closeSheet=closeSheet;
+
+// Swipe-down sheets
+['menu','spread'].forEach(id=>{
+  const s=document.getElementById(id+'Sheet');
+  let sy=0;
+  s.addEventListener('touchstart',e=>{sy=e.touches[0].clientY;},{passive:true});
+  s.addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-sy>60)closeSheet(id);},{passive:true});
+});
+
+// Infinite scroll
+document.getElementById('resScroll').addEventListener('scroll',function(){
+  if(this.scrollTop+this.clientHeight>=this.scrollHeight-200){
+    const lm=document.getElementById('loadMore');
+    if(!lm.classList.contains('show')){ lm.classList.add('show'); setTimeout(()=>lm.classList.remove('show'),2200); }
+  }
+});
+</script>
+</body>
+</html>
