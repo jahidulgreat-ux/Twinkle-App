@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Twinkle — Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#5B5BDB;--secondary:#8A8FE8;--accent:#C7C2F0;
+  --surface:#F5F4FF;--surface-2:#EDE9FE;--white:#FFFFFF;
+  --text-1:#1A1A2E;--text-2:#374151;--text-3:#6B7280;--text-4:#9CA3AF;
+  --success:#22C55E;--error:#EF4444;--bg:#F7F6FF;
+  --gradient:linear-gradient(135deg,#5B5BDB 0%,#8A8FE8 100%);
+  --radius-full:100px;
+  --input-h:72px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow:hidden;}
+
+.app{width:100%;max-width:480px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ── HEADER ── */
+.chat-header{
+  flex-shrink:0;background:var(--white);
+  border-bottom:1px solid #F3F4F6;
+  padding-top:env(safe-area-inset-top,0px);
+  box-shadow:0 2px 12px rgba(91,91,219,0.06);
+  z-index:100;
+}
+.chat-header-inner{height:60px;display:flex;align-items:center;padding:0 8px 0 4px;gap:6px;}
+.back-btn{width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-1);flex-shrink:0;transition:background 0.18s;}
+.back-btn:active{background:var(--surface-2);}
+.back-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+
+.partner-info{flex:1;display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer;}
+.partner-av{width:40px;height:40px;border-radius:50%;border:2px solid var(--accent);background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--primary);overflow:hidden;flex-shrink:0;}
+.partner-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.partner-text{min-width:0;}
+.partner-name{font-family:'Sora',sans-serif;font-size:16px;font-weight:600;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.partner-status{font-size:12px;color:var(--success);transition:all 0.3s;white-space:nowrap;}
+.partner-status.typing-active{color:var(--text-3);}
+
+.info-btn{width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-3);flex-shrink:0;transition:background 0.18s;}
+.info-btn:active{background:var(--surface-2);}
+.info-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── MESSAGES AREA ── */
+.messages-area{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:12px 0 8px;
+  background:var(--bg);
+  display:flex;flex-direction:column;
+}
+.messages-area::-webkit-scrollbar{display:none;}
+
+/* Date separator */
+.date-sep{
+  display:flex;justify-content:center;
+  margin:10px 0;
+}
+.date-sep span{
+  background:var(--surface-2);color:var(--primary);
+  font-size:12px;padding:4px 14px;
+  border-radius:var(--radius-full);
+}
+
+/* Received bubble */
+.bubble-wrap{display:flex;margin-bottom:2px;}
+.bubble-wrap.sent{justify-content:flex-end;}
+.bubble-wrap.received{justify-content:flex-start;padding-left:14px;}
+
+.bubble{
+  max-width:70%;padding:10px 14px;
+  word-break:break-word;position:relative;
+  animation:bubbleIn 0.2s cubic-bezier(0.34,1.3,0.64,1);
+}
+@keyframes bubbleIn{from{opacity:0;transform:scale(0.88);}to{opacity:1;transform:scale(1);}}
+
+.bubble.received{
+  background:var(--white);
+  border-radius:4px 18px 18px 18px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  font-size:15px;color:var(--text-1);line-height:1.5;
+}
+.bubble.sent{
+  background:var(--gradient);
+  border-radius:18px 4px 18px 18px;
+  font-size:15px;color:white;line-height:1.5;
+  margin-right:14px;
+}
+
+/* Timestamp row below bubble */
+.bubble-meta{
+  display:flex;align-items:center;gap:4px;
+  margin-top:3px;
+}
+.bubble-wrap.received .bubble-meta{padding-left:16px;}
+.bubble-wrap.sent    .bubble-meta{justify-content:flex-end;padding-right:14px;}
+.bubble-time{font-size:10px;color:var(--text-4);}
+.bubble-wrap.sent .bubble-time{color:rgba(255,255,255,0.65);}
+
+/* Tick icon */
+.tick svg{width:14px;height:14px;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.tick.sent{stroke:rgba(255,255,255,0.55);}
+.tick.delivered{stroke:rgba(255,255,255,0.7);}
+.tick.read{stroke:#60A5FA;}
+
+/* Typing indicator bubble */
+.typing-bubble{
+  background:var(--white);
+  border-radius:4px 18px 18px 18px;
+  padding:12px 16px;
+  display:flex;align-items:center;gap:5px;
+  margin:0 0 2px 14px;
+  width:fit-content;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  animation:bubbleIn 0.2s ease;
+}
+.typing-bubble span{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--accent);display:block;
+  animation:typingBounce 1.2s ease-in-out infinite;
+}
+.typing-bubble span:nth-child(2){animation-delay:0.18s;}
+.typing-bubble span:nth-child(3){animation-delay:0.36s;}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0);background:var(--accent);}30%{transform:translateY(-6px);background:var(--secondary);}}
+
+/* Skeleton bubbles */
+.skel-bubble-wrap{display:flex;padding:4px 14px;}
+.skel-bubble-wrap.right{justify-content:flex-end;}
+.skel-bubble{height:40px;border-radius:12px;}
+.skel{background:linear-gradient(90deg,#F0EFFE 0%,#F9F8FF 50%,#F0EFFE 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:12px;}
+@keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
+
+/* Empty messages */
+.chat-empty{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;padding:32px;text-align:center;
+}
+.chat-empty svg{width:48px;height:48px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.chat-empty p{font-size:14px;color:var(--text-3);}
+
+/* ── INPUT BAR ── */
+.input-bar{
+  flex-shrink:0;
+  background:var(--white);
+  border-top:1px solid #F3F4F6;
+  padding:10px 12px;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px);
+  display:flex;align-items:flex-end;gap:8px;
+}
+.msg-input{
+  flex:1;min-height:44px;max-height:120px;
+  background:#F3F4F6;border:1.5px solid transparent;
+  border-radius:var(--radius-full);
+  padding:12px 18px;resize:none;outline:none;
+  font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text-1);
+  line-height:1.4;transition:border-color 0.2s,background 0.2s;
+  overflow:hidden;
+}
+.msg-input:focus{background:var(--white);border-color:var(--accent);}
+.msg-input::placeholder{color:var(--text-4);}
+
+.send-btn{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:var(--gradient);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 14px rgba(91,91,219,0.32);
+  transition:transform 0.2s cubic-bezier(0.34,1.4,0.64,1),box-shadow 0.18s,opacity 0.2s;
+}
+.send-btn:active{transform:scale(0.9);}
+.send-btn.pop{animation:sendPop 0.35s cubic-bezier(0.34,1.6,0.64,1);}
+@keyframes sendPop{0%{transform:scale(0.9);}50%{transform:scale(1.12);}100%{transform:scale(1);}}
+.send-btn svg{width:20px;height:20px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.send-btn:disabled{opacity:0.45;cursor:default;}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:calc(env(safe-area-inset-top,0px)+12px);left:50%;transform:translateX(-50%) translateY(-80px);z-index:900;display:flex;align-items:center;gap:8px;padding:11px 18px;border-radius:var(--radius-full);font-size:13px;font-weight:500;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.12);transition:transform 0.38s cubic-bezier(0.34,1.4,0.64,1);pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.error{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;}
+.toast.success{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;}
+.toast svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"><svg id="toastIco" viewBox="0 0 24 24"></svg><span id="toastMsg"></span></div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="chat-header">
+    <div class="chat-header-inner">
+      <button class="back-btn" onclick="history.back()" aria-label="Back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="partner-info" id="partnerInfo" onclick="goToProfile()">
+        <div class="partner-av" id="partnerAv"></div>
+        <div class="partner-text">
+          <div class="partner-name" id="partnerName">Loading...</div>
+          <div class="partner-status" id="partnerStatus">In your Circle</div>
+        </div>
+      </div>
+      <button class="info-btn" onclick="goToProfile()" aria-label="Profile">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="messages-area" id="messagesArea">
+    <!-- Skeleton loading -->
+    <div id="skeletons">
+      <div class="skel-bubble-wrap"><div class="skel skel-bubble" style="width:55%;"></div></div>
+      <div class="skel-bubble-wrap right"><div class="skel skel-bubble" style="width:45%;"></div></div>
+      <div class="skel-bubble-wrap"><div class="skel skel-bubble" style="width:65%;"></div></div>
+    </div>
+    <div id="msgList"></div>
+    <div id="typingIndicator" style="display:none;">
+      <div class="typing-bubble"><span></span><span></span><span></span></div>
+    </div>
+    <div class="chat-empty" id="chatEmpty" style="display:none;">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <p id="chatEmptyText">Say hello! Start the conversation.</p>
+    </div>
+  </div>
+
+  <!-- INPUT BAR -->
+  <div class="input-bar">
+    <textarea class="msg-input" id="msgInput" placeholder="Type a message..."
+      rows="1" maxlength="2000"
+      oninput="onMsgInput()"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled aria-label="Send">
+      <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, collection,
+  query, orderBy, limit, onSnapshot,
+  addDoc, updateDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getDatabase, ref, set, onValue, onDisconnect
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const cfg={apiKey:"AIzaSyDIAPr5dXMoWsgHNMGON1RG6rhxi1ccQUw",authDomain:"twinkle-7dd5f.firebaseapp.com",databaseURL:"https://twinkle-7dd5f-default-rtdb.firebaseio.com",projectId:"twinkle-7dd5f",storageBucket:"twinkle-7dd5f.firebasestorage.app",messagingSenderId:"584206668657",appId:"1:584206668657:web:3bbb1ae83ecd892b50dcd0"};
+const fbApp=initializeApp(cfg);
+const auth=getAuth(fbApp);
+const db=getFirestore(fbApp);
+const rtdb=getDatabase(fbApp);
+
+let currentUser=null,userData=null;
+let chatId=null,partnerId=null,partnerName='';
+let typingTimeout=null;
+let isTypingNow=false;
+
+/* ── Load session data ── */
+const sessionData=JSON.parse(sessionStorage.getItem('twinkle_chat')||'{}');
+chatId=sessionData.chatId||null;
+partnerId=sessionData.partnerId||null;
+partnerName=sessionData.name||'Student';
+
+/* ── Auth ── */
+onAuthStateChanged(auth, async user=>{
+  if(!user){window.location.href='login.html';return;}
+  currentUser=user;
+  const snap=await getDoc(doc(db,'users',user.uid));
+  userData=snap.data();
+
+  initHeader();
+  if(chatId){
+    listenMessages();
+    listenPartnerTyping();
+    markMessagesRead();
+  }else{
+    document.getElementById('skeletons').style.display='none';
+    document.getElementById('chatEmpty').style.display='flex';
+    document.getElementById('chatEmptyText').textContent='Could not load chat.';
+  }
+});
+
+/* ── Header ── */
+function initHeader(){
+  document.getElementById('partnerName').textContent=partnerName;
+  const photo=sessionData.photo||'';
+  const av=document.getElementById('partnerAv');
+  if(photo){av.innerHTML=`<img src="${photo}" alt="">`;}
+  else{av.textContent=(partnerName||'S')[0].toUpperCase();}
+  document.title=`Twinkle — ${partnerName}`;
+  if(sessionData.meta) document.getElementById('partnerStatus').textContent=sessionData.meta||'In your Circle';
+}
+
+window.goToProfile=function(){
+  if(partnerId) window.location.href='user-profile.html?uid='+partnerId;
+};
+
+/* ── Real-time messages ── */
+function listenMessages(){
+  const msgQ=query(
+    collection(db,'chats',chatId,'messages'),
+    orderBy('createdAt','asc'),
+    limit(100)
+  );
+
+  onSnapshot(msgQ, snap=>{
+    document.getElementById('skeletons').style.display='none';
+    const msgs=[];
+    snap.forEach(d=>msgs.push({id:d.id,...d.data()}));
+
+    if(!msgs.length){
+      document.getElementById('chatEmpty').style.display='flex';
+      document.getElementById('msgList').innerHTML='';
+      return;
+    }
+    document.getElementById('chatEmpty').style.display='none';
+    renderMessages(msgs);
+    scrollToBottom();
+  });
+}
+
+function renderMessages(msgs){
+  const list=document.getElementById('msgList');
+  list.innerHTML='';
+  let lastDate='';
+
+  msgs.forEach(msg=>{
+    const isSent=msg.senderId===currentUser.uid;
+    const ts=msg.createdAt?.toMillis?.()|| (msg.createdAt?.seconds*1000)||Date.now();
+    const dateStr=getDateStr(ts);
+    const timeStr=getTimeStr(ts);
+
+    // Date separator
+    if(dateStr!==lastDate){
+      lastDate=dateStr;
+      const sep=document.createElement('div');
+      sep.className='date-sep';
+      sep.innerHTML=`<span>${dateStr}</span>`;
+      list.appendChild(sep);
+    }
+
+    // Bubble
+    const wrap=document.createElement('div');
+    wrap.className=`bubble-wrap ${isSent?'sent':'received'}`;
+
+    const status=isSent?(msg.readBy?.includes(partnerId)?'read':msg.deliveredTo?.includes(partnerId)?'delivered':'sent'):'';
+    const tickHtml=isSent?`
+      <span class="tick ${status}">
+        <svg viewBox="0 0 24 24">
+          ${status==='read'
+            ?'<polyline points="17 1 8 13 3 8"/><polyline points="22 1 13 13" style="transform:translateX(-5px)"/>'
+            :status==='delivered'
+            ?'<polyline points="17 1 8 13 3 8"/><polyline points="22 1 13 13" style="transform:translateX(-5px)"/>'
+            :'<polyline points="20 6 9 17 4 12"/>'}
+        </svg>
+      </span>`:'';
+
+    wrap.innerHTML=`
+      <div class="bubble ${isSent?'sent':'received'}">${escHtml(msg.text||'')}</div>`;
+
+    const metaWrap=document.createElement('div');
+    metaWrap.className='bubble-meta';
+    metaWrap.innerHTML=`<span class="bubble-time">${timeStr}</span>${tickHtml}`;
+    wrap.appendChild(metaWrap);
+
+    list.appendChild(wrap);
+  });
+}
+
+function scrollToBottom(smooth=false){
+  const area=document.getElementById('messagesArea');
+  area.scrollTo({top:area.scrollHeight,behavior:smooth?'smooth':'instant'});
+}
+
+/* ── SEND MESSAGE ── */
+window.sendMessage=async function(){
+  const input=document.getElementById('msgInput');
+  const text=input.value.trim();
+  if(!text||!chatId||!currentUser) return;
+
+  // Clear input immediately
+  input.value='';
+  input.style.height='auto';
+  document.getElementById('sendBtn').disabled=true;
+
+  // Pop animation
+  const btn=document.getElementById('sendBtn');
+  btn.classList.remove('pop');
+  void btn.offsetWidth;
+  btn.classList.add('pop');
+
+  // Clear typing status
+  clearTypingStatus();
+
+  try{
+    const msgRef=await addDoc(collection(db,'chats',chatId,'messages'),{
+      senderId:   currentUser.uid,
+      senderName: userData?.displayName||'',
+      text,
+      createdAt:  serverTimestamp(),
+      readBy:     [],
+      deliveredTo:[]
+    });
+
+    // Update chat metadata
+    await updateDoc(doc(db,'chats',chatId),{
+      lastMessage:    text,
+      lastMessageAt:  serverTimestamp(),
+      [`unreadCounts.${partnerId}`]: (await getDoc(doc(db,'chats',chatId))).data()?.unreadCounts?.[partnerId]||0 + 1
+    });
+  }catch(e){
+    showToast('error','Unable to send. Check your connection.');
+    input.value=text; // restore text
+    document.getElementById('sendBtn').disabled=false;
+  }
+};
+
+/* ── TYPING STATUS ── */
+window.onMsgInput=function(){
+  const input=document.getElementById('msgInput');
+  // Auto-expand
+  input.style.height='auto';
+  input.style.height=Math.min(input.scrollHeight,120)+'px';
+  // Enable/disable send
+  document.getElementById('sendBtn').disabled=!input.value.trim();
+
+  // Typing indicator to RTDB
+  if(!isTypingNow){
+    isTypingNow=true;
+    setTypingStatus(true);
+  }
+  clearTimeout(typingTimeout);
+  typingTimeout=setTimeout(()=>{
+    isTypingNow=false;
+    setTypingStatus(false);
+  },2000);
+};
+
+async function setTypingStatus(isTyping){
+  if(!chatId||!currentUser) return;
+  try{
+    const tRef=ref(rtdb,`typing/${chatId}/${currentUser.uid}`);
+    await set(tRef,isTyping);
+    if(isTyping) onDisconnect(tRef).set(false);
+  }catch{}
+}
+
+function clearTypingStatus(){
+  clearTimeout(typingTimeout);
+  isTypingNow=false;
+  setTypingStatus(false);
+}
+
+/* ── LISTEN PARTNER TYPING ── */
+function listenPartnerTyping(){
+  if(!chatId||!partnerId) return;
+  const tRef=ref(rtdb,`typing/${chatId}/${partnerId}`);
+  onValue(tRef, snap=>{
+    const isTyping=snap.val()===true;
+    const indicator=document.getElementById('typingIndicator');
+    const statusEl=document.getElementById('partnerStatus');
+    if(isTyping){
+      indicator.style.display='block';
+      statusEl.textContent='typing...';
+      statusEl.classList.add('typing-active');
+      scrollToBottom(true);
+    }else{
+      indicator.style.display='none';
+      statusEl.textContent=sessionData.meta||'In your Circle';
+      statusEl.classList.remove('typing-active');
+    }
+  });
+}
+
+/* ── MARK READ ── */
+async function markMessagesRead(){
+  if(!chatId||!currentUser) return;
+  try{
+    await updateDoc(doc(db,'chats',chatId),{
+      [`unreadCounts.${currentUser.uid}`]:0
+    });
+  }catch{}
+}
+
+/* ── HELPERS ── */
+function getDateStr(ms){
+  const d=new Date(ms);
+  const now=new Date();
+  const yest=new Date(now);yest.setDate(yest.getDate()-1);
+  if(d.toDateString()===now.toDateString()) return 'Today';
+  if(d.toDateString()===yest.toDateString()) return 'Yesterday';
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:d.getFullYear()!==now.getFullYear()?'numeric':undefined});
+}
+
+function getTimeStr(ms){
+  return new Date(ms).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+}
+
+function escHtml(s){
+  if(!s)return'';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(type,msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastIco').innerHTML=type==='error'?'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>':'<polyline points="20 6 9 17 4 12"/>';
+  t.className=`toast ${type}`;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+/* ── Keyboard handling ── */
+window.addEventListener('resize',()=>{
+  const area=document.getElementById('messagesArea');
+  // When keyboard opens, scroll to bottom
+  if(window.innerHeight < window.screen.height*0.75){
+    setTimeout(()=>scrollToBottom(true),100);
+  }
+});
+
+// Clean up typing on page unload
+window.addEventListener('beforeunload',()=>clearTypingStatus());
+window.addEventListener('pagehide',()=>clearTypingStatus());
+</script>
+</body>
+</html>
