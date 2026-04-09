@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Twinkle — New Post</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#5B5BDB;--secondary:#8A8FE8;--accent:#C7C2F0;
+  --surface:#F5F4FF;--surface-2:#EDE9FE;--white:#FFFFFF;
+  --text-1:#1A1A2E;--text-2:#374151;--text-3:#6B7280;--text-4:#9CA3AF;
+  --success:#22C55E;--warning:#F59E0B;--error:#EF4444;--border:#E5E7EB;--bg:#F7F6FF;
+  --gradient:linear-gradient(135deg,#5B5BDB 0%,#8A8FE8 100%);
+  --radius-md:14px;--radius-lg:20px;--radius-full:100px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow:hidden;}
+.app{width:100%;max-width:480px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ── HEADER ── */
+.header{
+  flex-shrink:0;background:var(--white);
+  border-bottom:1px solid #F3F4F6;
+  padding-top:env(safe-area-inset-top,0px);
+  z-index:100;
+}
+.header-inner{
+  height:56px;display:flex;align-items:center;padding:0 12px;gap:8px;
+}
+.close-btn{
+  width:40px;height:40px;border-radius:12px;background:none;border:none;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--text-1);transition:background 0.18s;flex-shrink:0;
+}
+.close-btn:active{background:var(--surface-2);}
+.close-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.header-title{font-family:'Sora',sans-serif;font-size:17px;font-weight:600;color:var(--text-1);flex:1;text-align:center;}
+.share-btn{
+  padding:0 16px;height:36px;border-radius:var(--radius-full);
+  background:var(--gradient);border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:white;
+  box-shadow:0 3px 12px rgba(91,91,219,0.28);
+  transition:opacity 0.2s,transform 0.18s;white-space:nowrap;
+  display:flex;align-items:center;gap:6px;
+}
+.share-btn:disabled{background:var(--border);color:var(--text-4);box-shadow:none;cursor:not-allowed;}
+.share-btn:not(:disabled):active{transform:scale(0.96);}
+.share-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.share-btn.loading{opacity:0.7;pointer-events:none;}
+
+/* ── TAB SELECTOR ── */
+.tab-selector{
+  flex-shrink:0;padding:10px 16px;
+  background:var(--white);border-bottom:1px solid #F3F4F6;
+}
+.tab-inner{
+  background:var(--surface-2);border-radius:12px;
+  padding:4px;display:flex;gap:2px;
+}
+.tab-btn{
+  flex:1;height:36px;border-radius:9px;border:none;
+  background:transparent;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+  color:var(--text-3);transition:all 0.22s cubic-bezier(0.34,1.2,0.64,1);
+}
+.tab-btn.active{
+  background:var(--white);color:var(--primary);
+  font-weight:600;
+  box-shadow:0 2px 8px rgba(91,91,219,0.12);
+}
+
+/* ── LIMIT BANNER ── */
+.limit-banner{
+  display:none;flex-shrink:0;
+  margin:12px 16px 0;padding:12px 16px;
+  background:#FFF7ED;border:1px solid #FED7AA;border-radius:14px;
+  align-items:flex-start;gap:10px;
+}
+.limit-banner.show{display:flex;}
+.limit-banner svg{width:18px;height:18px;stroke:#D97706;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px;}
+.limit-banner-text h4{font-size:14px;font-weight:600;color:#92400E;}
+.limit-banner-text p{font-size:12px;color:#B45309;margin-top:2px;}
+
+/* ── SCROLL AREA ── */
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* ── AUTHOR ROW ── */
+.author-row{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px 8px;
+}
+.author-av{
+  width:42px;height:42px;border-radius:50%;
+  border:2px solid var(--accent);background:var(--surface-2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora',sans-serif;font-size:16px;font-weight:700;
+  color:var(--primary);flex-shrink:0;overflow:hidden;
+}
+.author-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.author-name{font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:var(--text-1);}
+.author-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--surface-2);padding:3px 8px;border-radius:var(--radius-full);
+  font-size:11px;color:var(--primary);font-weight:500;margin-top:2px;
+}
+.author-badge svg{width:11px;height:11px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;}
+
+/* ── TWEET COMPOSER ── */
+.tweet-area{padding:0 16px 12px;}
+.tweet-textarea{
+  width:100%;min-height:140px;
+  background:transparent;border:none;outline:none;resize:none;
+  font-family:'DM Sans',sans-serif;font-size:16px;color:var(--text-1);line-height:1.65;
+}
+.tweet-textarea::placeholder{color:var(--text-4);}
+
+/* Hashtag pills */
+.hashtag-pills{
+  display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 10px;min-height:28px;
+}
+.h-pill{
+  display:flex;align-items:center;gap:5px;
+  background:var(--surface-2);border-radius:var(--radius-full);
+  padding:4px 10px;font-size:13px;color:var(--primary);font-weight:500;
+  animation:popIn 0.2s cubic-bezier(0.34,1.5,0.64,1);
+}
+@keyframes popIn{from{transform:scale(0.7);opacity:0;}to{transform:scale(1);opacity:1;}}
+.h-pill button{
+  background:none;border:none;cursor:pointer;color:var(--secondary);
+  display:flex;align-items:center;padding:1px;
+}
+.h-pill button svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;}
+
+/* Tag input */
+.tag-input-wrap{
+  display:none;padding:0 16px 12px;
+  align-items:center;gap:8px;
+}
+.tag-input-wrap.show{display:flex;}
+.tag-input{
+  flex:1;height:38px;background:#F3F4F6;border-radius:var(--radius-full);
+  border:1.5px solid transparent;padding:0 14px;
+  font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text-1);outline:none;
+  transition:border-color 0.2s;
+}
+.tag-input:focus{border-color:var(--accent);background:var(--white);}
+.tag-input::placeholder{color:var(--text-4);}
+.tag-add-btn{
+  height:34px;padding:0 14px;border-radius:var(--radius-full);
+  background:var(--primary);border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:white;
+  transition:transform 0.18s;
+}
+.tag-add-btn:active{transform:scale(0.95);}
+
+/* Char counter */
+.char-counter{
+  text-align:right;padding:0 16px 8px;
+  font-size:12px;color:var(--text-4);transition:color 0.2s;
+}
+.char-counter.warn{color:var(--warning);}
+.char-counter.danger{color:var(--error);}
+
+/* ── POST COMPOSER ── */
+.post-area{padding:0 16px;}
+
+/* Image upload box */
+.img-upload-box{
+  width:100%;aspect-ratio:1/1;
+  border:2px dashed var(--accent);border-radius:16px;
+  background:var(--surface);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;cursor:pointer;position:relative;overflow:hidden;
+  transition:border-color 0.2s,background 0.2s;margin-bottom:16px;
+}
+.img-upload-box:active{border-color:var(--primary);background:var(--surface-2);}
+.img-upload-box svg{width:36px;height:36px;stroke:var(--secondary);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.img-upload-box p{font-size:14px;color:var(--text-3);}
+.img-upload-box .sub{font-size:12px;color:var(--text-4);}
+
+/* Uploaded image preview */
+.img-preview{
+  width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;
+  display:none;margin-bottom:16px;
+}
+.img-remove-btn{
+  position:absolute;top:10px;right:10px;
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(0,0,0,0.5);border:none;cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+}
+.img-remove-btn.show{display:flex;}
+.img-remove-btn svg{width:16px;height:16px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Fields */
+.field-input{
+  width:100%;height:50px;background:#FAFAFA;
+  border:1.5px solid var(--border);border-radius:var(--radius-md);
+  padding:0 14px;font-family:'DM Sans',sans-serif;font-size:15px;
+  color:var(--text-1);outline:none;margin-bottom:12px;
+  transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none;
+}
+.field-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,91,219,0.09);}
+.field-input::placeholder{color:var(--text-4);font-size:14px;}
+.field-input.error{border-color:var(--error);}
+
+.desc-area{
+  width:100%;min-height:80px;background:#FAFAFA;
+  border:1.5px solid var(--border);border-radius:var(--radius-md);
+  padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;
+  color:var(--text-1);outline:none;resize:none;line-height:1.5;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.desc-area:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,91,219,0.09);}
+.desc-area::placeholder{color:var(--text-4);}
+.desc-counter{text-align:right;font-size:12px;color:var(--text-4);margin-top:4px;margin-bottom:8px;}
+
+/* ── BOTTOM TOOLBAR ── */
+.bottom-toolbar{
+  flex-shrink:0;height:52px;
+  background:var(--white);border-top:1px solid #F3F4F6;
+  display:flex;align-items:center;padding:0 12px;gap:4px;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.tool-btn{
+  width:40px;height:40px;border-radius:12px;background:none;border:none;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--text-3);transition:background 0.18s,color 0.18s;
+}
+.tool-btn:active{background:var(--surface-2);color:var(--primary);}
+.tool-btn.active{color:var(--primary);background:var(--surface-2);}
+.tool-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.audience-pill{
+  margin-left:auto;display:flex;align-items:center;gap:6px;
+  background:var(--surface-2);border-radius:var(--radius-full);
+  padding:6px 12px;font-size:13px;color:var(--primary);font-weight:500;
+}
+.audience-pill svg{width:13px;height:13px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:calc(env(safe-area-inset-top,0px)+12px);left:50%;transform:translateX(-50%) translateY(-80px);z-index:900;display:flex;align-items:center;gap:8px;padding:11px 18px;border-radius:var(--radius-full);font-size:13px;font-weight:500;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.12);transition:transform 0.38s cubic-bezier(0.34,1.4,0.64,1);pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;}
+.toast.error{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;}
+.toast svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;}
+
+/* ── SUCCESS OVERLAY ── */
+.success-overlay{position:fixed;inset:0;background:var(--gradient);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;opacity:0;pointer-events:none;transition:opacity 0.35s;}
+.success-overlay.show{opacity:1;pointer-events:all;}
+.success-overlay .s-icon{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;animation:popIn 0.5s cubic-bezier(0.34,1.6,0.64,1);}
+.success-overlay .s-icon svg{width:34px;height:34px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.success-overlay h3{font-family:'Sora',sans-serif;font-size:24px;font-weight:700;color:white;animation:popIn 0.5s ease 0.1s both;}
+.success-overlay p{font-size:14px;color:rgba(255,255,255,0.8);animation:popIn 0.4s ease 0.18s both;}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"><svg id="toastIco" viewBox="0 0 24 24"></svg><span id="toastMsg"></span></div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="s-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+  <h3>Posted!</h3>
+  <p>Your content is now live on Twinkle</p>
+</div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <button class="close-btn" onclick="history.back()" aria-label="Close">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <span class="header-title" id="headerTitle">New Post</span>
+      <button class="share-btn" id="shareBtn" onclick="publish()" disabled>
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Share
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB SELECTOR -->
+  <div class="tab-selector">
+    <div class="tab-inner">
+      <button class="tab-btn active" id="tweetTab" onclick="switchTab('tweet')">Tweet</button>
+      <button class="tab-btn" id="postTab" onclick="switchTab('post')">Post</button>
+    </div>
+  </div>
+
+  <!-- DAILY LIMIT BANNER -->
+  <div class="limit-banner" id="limitBanner">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <div class="limit-banner-text">
+      <h4>Post limit reached</h4>
+      <p>You can post again tomorrow. Tweets are unlimited!</p>
+    </div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="scroll-area" id="scrollArea">
+
+    <!-- ═══ TWEET COMPOSER ═══ -->
+    <div id="tweetComposer">
+      <div class="author-row">
+        <div class="author-av" id="authorAvTweet"></div>
+        <div>
+          <div class="author-name" id="authorNameTweet">Loading...</div>
+          <div class="author-badge">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Public · All students
+          </div>
+        </div>
+      </div>
+
+      <div class="tweet-area">
+        <textarea class="tweet-textarea" id="tweetInput"
+          placeholder="What's on your mind, student?"
+          maxlength="1000"
+          oninput="onTweetInput()"
+          autofocus></textarea>
+      </div>
+
+      <div class="hashtag-pills" id="hashtagPills"></div>
+
+      <div class="tag-input-wrap" id="tagInputWrap">
+        <input type="text" class="tag-input" id="tagInput"
+               placeholder="Add a hashtag..." maxlength="30"
+               onkeydown="if(event.key==='Enter'||event.key===' '){addTag();event.preventDefault();}">
+        <button class="tag-add-btn" onclick="addTag()">Add</button>
+      </div>
+
+      <div class="char-counter" id="charCounter">0 / 1000</div>
+    </div>
+
+    <!-- ═══ POST COMPOSER ═══ -->
+    <div id="postComposer" style="display:none;">
+      <div class="author-row">
+        <div class="author-av" id="authorAvPost"></div>
+        <div>
+          <div class="author-name" id="authorNamePost">Loading...</div>
+          <div class="author-badge">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Public · All students
+          </div>
+        </div>
+      </div>
+
+      <div class="post-area">
+        <!-- Image upload -->
+        <div class="img-upload-box" id="imgUploadBox" onclick="triggerImageUpload()">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <p>Tap to add image</p>
+          <span class="sub">1:1 ratio · Max 5MB · JPG or PNG</span>
+          <img id="imgPreview" class="img-preview" alt="">
+          <button class="img-remove-btn" id="imgRemoveBtn" onclick="removeImage(event)" aria-label="Remove image">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <input type="text" class="field-input" id="postTitle" placeholder="Post title (required)"
+               oninput="checkPostReady()" maxlength="100">
+
+        <textarea class="desc-area" id="postDesc" placeholder="Add a description (optional)"
+                  maxlength="150" oninput="onDescInput()"></textarea>
+        <div class="desc-counter" id="descCounter">0 / 150</div>
+      </div>
+    </div>
+
+  </div><!-- /scroll-area -->
+
+  <!-- BOTTOM TOOLBAR -->
+  <div class="bottom-toolbar">
+    <button class="tool-btn" id="hashtagToolBtn" onclick="toggleTagInput()" aria-label="Hashtag">
+      <svg viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+    </button>
+    <div class="audience-pill">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Public
+    </div>
+  </div>
+
+</div>
+
+<!-- Cloudinary -->
+<script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, collection,
+  addDoc, query, where, getDocs,
+  serverTimestamp, Timestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const cfg={apiKey:"AIzaSyDIAPr5dXMoWsgHNMGON1RG6rhxi1ccQUw",authDomain:"twinkle-7dd5f.firebaseapp.com",databaseURL:"https://twinkle-7dd5f-default-rtdb.firebaseio.com",projectId:"twinkle-7dd5f",storageBucket:"twinkle-7dd5f.firebasestorage.app",messagingSenderId:"584206668657",appId:"1:584206668657:web:3bbb1ae83ecd892b50dcd0"};
+const fbApp=initializeApp(cfg);
+const auth=getAuth(fbApp);
+const db=getFirestore(fbApp);
+
+let currentUser=null,userData=null;
+let activeTab='tweet';
+let uploadedImageUrl='';
+let tags=[];
+let postLimitReached=false;
+
+onAuthStateChanged(auth, async user=>{
+  if(!user){window.location.href='login.html';return;}
+  currentUser=user;
+  const snap=await getDoc(doc(db,'users',user.uid));
+  if(!snap.exists()){window.location.href='profile-form.html';return;}
+  userData=snap.data();
+  initAuthor();
+  await checkDailyLimit();
+});
+
+function initAuthor(){
+  const name=userData.displayName||userData.userId||'Student';
+  ['Tweet','Post'].forEach(s=>{
+    const av=document.getElementById(`authorAv${s}`);
+    const nm=document.getElementById(`authorName${s}`);
+    if(nm) nm.textContent=name;
+    if(av){
+      if(userData.photoURL){ av.innerHTML=`<img src="${userData.photoURL}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`; }
+      else{ av.textContent=name[0].toUpperCase(); }
+    }
+  });
+}
+
+async function checkDailyLimit(){
+  try{
+    const todayStart=new Date(); todayStart.setHours(0,0,0,0);
+    const q=query(
+      collection(db,'posts'),
+      where('authorId','==',currentUser.uid),
+      where('type','==','post'),
+      where('createdAt','>=',Timestamp.fromDate(todayStart))
+    );
+    const snap=await getDocs(q);
+    postLimitReached=snap.size>=1;
+  }catch{}
+}
+
+/* ── PUBLISH ── */
+window.publish=async function(){
+  if(!currentUser) return;
+  const btn=document.getElementById('shareBtn');
+  btn.classList.add('loading');
+  btn.disabled=true;
+
+  try{
+    if(activeTab==='tweet'){
+      const text=document.getElementById('tweetInput').value.trim();
+      if(!text) return;
+      await addDoc(collection(db,'posts'),{
+        type:'tweet', content:text, hashtags:tags,
+        authorId:currentUser.uid,
+        authorName:userData.displayName||'',
+        authorPhoto:userData.photoURL||'',
+        board:userData.board||'',
+        classGrade:userData.classGrade||'',
+        medium:userData.medium||'',
+        state:userData.state||'',
+        boostCount:0,opinionCount:0,spreadCount:0,
+        boostedBy:[],savedBy:[],
+        createdAt:serverTimestamp()
+      });
+    }else{
+      const title=document.getElementById('postTitle').value.trim();
+      const desc=document.getElementById('postDesc').value.trim();
+      if(!title||!uploadedImageUrl) return;
+      await addDoc(collection(db,'posts'),{
+        type:'post', title, description:desc,
+        imageUrl:uploadedImageUrl,
+        authorId:currentUser.uid,
+        authorName:userData.displayName||'',
+        authorPhoto:userData.photoURL||'',
+        board:userData.board||'',
+        classGrade:userData.classGrade||'',
+        medium:userData.medium||'',
+        state:userData.state||'',
+        boostCount:0,opinionCount:0,spreadCount:0,
+        boostedBy:[],savedBy:[],
+        createdAt:serverTimestamp()
+      });
+    }
+
+    // Show success
+    document.getElementById('successOverlay').classList.add('show');
+    setTimeout(()=>{ window.location.href='feed.html'; },1400);
+
+  }catch(e){
+    btn.classList.remove('loading'); btn.disabled=false;
+    showToast('error','Could not publish. Try again.');
+  }
+};
+
+window._uploadImage=function(){
+  const widget=cloudinary.createUploadWidget({
+    cloudName:'dh7iftwxa',uploadPreset:'unsigned_upload',
+    folder:'twinkle/posts',
+    cropping:true,croppingAspectRatio:1,showSkipCropButton:false,
+    maxFileSize:5242880,clientAllowedFormats:['jpg','jpeg','png'],
+    sources:['local','camera'],
+    styles:{palette:{window:'#FFFFFF',windowBorder:'#EDE9FE',tabIcon:'#5B5BDB',link:'#5B5BDB',action:'#5B5BDB',inProgress:'#5B5BDB',complete:'#22C55E',sourceBg:'#F5F4FF'}}
+  },(error,result)=>{
+    if(result&&result.event==='success'){
+      uploadedImageUrl=result.info.secure_url;
+      const prev=document.getElementById('imgPreview');
+      const box=document.getElementById('imgUploadBox');
+      prev.src=uploadedImageUrl;
+      prev.style.display='block';
+      box.querySelector('svg').style.display='none';
+      box.querySelector('p').style.display='none';
+      box.querySelector('.sub').style.display='none';
+      document.getElementById('imgRemoveBtn').classList.add('show');
+      checkPostReady();
+      widget.close();
+    }
+  });
+  widget.open();
+};
+
+function showToast(type,msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastIco').innerHTML=type==='success'?'<polyline points="20 6 9 17 4 12"/>':'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+  t.className=`toast ${type}`;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+window.showToast=showToast;
+</script>
+
+<script>
+let activeTab='tweet';
+let tags=[];
+let uploadedImageUrl='';
+
+/* ── TAB SWITCH ── */
+function switchTab(tab){
+  activeTab=tab;
+  document.getElementById('tweetTab').classList.toggle('active',tab==='tweet');
+  document.getElementById('postTab').classList.toggle('active',tab==='post');
+  document.getElementById('tweetComposer').style.display=tab==='tweet'?'block':'none';
+  document.getElementById('postComposer').style.display=tab==='post'?'block':'none';
+  document.getElementById('headerTitle').textContent=tab==='tweet'?'New Tweet':'New Post';
+  document.getElementById('hashtagToolBtn').style.display=tab==='tweet'?'flex':'none';
+
+  // Check post daily limit
+  if(tab==='post' && window._postLimitReached){
+    document.getElementById('limitBanner').classList.add('show');
+  }else{
+    document.getElementById('limitBanner').classList.remove('show');
+  }
+
+  updateShareBtn();
+}
+window.switchTab=switchTab;
+
+/* ── TWEET INPUT ── */
+function onTweetInput(){
+  const val=document.getElementById('tweetInput').value;
+  const len=val.length;
+  const counter=document.getElementById('charCounter');
+  counter.textContent=`${len} / 1000`;
+  counter.className='char-counter'+(len>=950?' danger':len>=800?' warn':'');
+  updateShareBtn();
+}
+window.onTweetInput=onTweetInput;
+
+/* ── POST ── */
+function checkPostReady(){
+  updateShareBtn();
+}
+window.checkPostReady=checkPostReady;
+
+function onDescInput(){
+  const val=document.getElementById('postDesc').value;
+  document.getElementById('descCounter').textContent=`${val.length} / 150`;
+}
+window.onDescInput=onDescInput;
+
+function updateShareBtn(){
+  const btn=document.getElementById('shareBtn');
+  if(activeTab==='tweet'){
+    const text=document.getElementById('tweetInput').value.trim();
+    btn.disabled=!text;
+  }else{
+    const title=document.getElementById('postTitle').value.trim();
+    const hasImage=!!document.getElementById('imgPreview').src&&document.getElementById('imgPreview').style.display==='block';
+    btn.disabled=!title||!hasImage||window._postLimitReached;
+  }
+}
+
+/* ── IMAGE UPLOAD ── */
+function triggerImageUpload(){
+  if(window._uploadImage) window._uploadImage();
+}
+window.triggerImageUpload=triggerImageUpload;
+
+function removeImage(e){
+  e.stopPropagation();
+  const prev=document.getElementById('imgPreview');
+  const box=document.getElementById('imgUploadBox');
+  prev.style.display='none';
+  prev.src='';
+  uploadedImageUrl='';
+  window._uploadedImageUrl='';
+  box.querySelector('svg').style.display='';
+  box.querySelector('p').style.display='';
+  box.querySelector('.sub').style.display='';
+  document.getElementById('imgRemoveBtn').classList.remove('show');
+  updateShareBtn();
+}
+window.removeImage=removeImage;
+
+/* ── HASHTAGS ── */
+function toggleTagInput(){
+  const wrap=document.getElementById('tagInputWrap');
+  wrap.classList.toggle('show');
+  document.getElementById('hashtagToolBtn').classList.toggle('active');
+  if(wrap.classList.contains('show')) document.getElementById('tagInput').focus();
+}
+window.toggleTagInput=toggleTagInput;
+
+function addTag(){
+  const inp=document.getElementById('tagInput');
+  let val=inp.value.trim().replace(/^#+/,'').replace(/\s+/g,'_');
+  if(!val||tags.includes(val)||tags.length>=10) return;
+  tags.push(val);
+  renderTags();
+  inp.value='';
+}
+window.addTag=addTag;
+
+function removeTag(t){
+  tags=tags.filter(x=>x!==t);
+  renderTags();
+}
+window.removeTag=removeTag;
+
+function renderTags(){
+  const el=document.getElementById('hashtagPills');
+  el.innerHTML=tags.map(t=>`
+    <div class="h-pill">
+      #${t}
+      <button onclick="removeTag('${t}')" aria-label="Remove">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>`).join('');
+}
+
+// Sync uploadedImageUrl to module scope
+Object.defineProperty(window,'_uploadedImageUrl',{
+  get(){return uploadedImageUrl;},
+  set(v){uploadedImageUrl=v;}
+});
+</script>
+</body>
+</html>
