@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Twinkle — Academic Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:    #5B5BDB;
+    --secondary:  #8A8FE8;
+    --accent:     #C7C2F0;
+    --surface:    #F5F4FF;
+    --surface-2:  #EDE9FE;
+    --white:      #FFFFFF;
+    --text-1:     #1A1A2E;
+    --text-2:     #374151;
+    --text-3:     #6B7280;
+    --text-4:     #9CA3AF;
+    --success:    #22C55E;
+    --error:      #EF4444;
+    --border:     #E5E7EB;
+    --shadow-sm:  0 2px 8px rgba(91,91,219,0.08);
+    --shadow-md:  0 4px 24px rgba(91,91,219,0.10);
+    --radius-md:  14px;
+    --radius-lg:  20px;
+    --radius-xl:  24px;
+    --radius-full:100px;
+    --gradient:   linear-gradient(135deg,#5B5BDB 0%,#8A8FE8 100%);
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+  html,body{
+    width:100%;height:100%;
+    background:#F7F6FF;
+    font-family:'DM Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+    overflow-x:hidden;
+  }
+
+  /* ── APP SHELL ── */
+  .app{
+    width:100%;max-width:480px;
+    min-height:100dvh;
+    margin:0 auto;
+    display:flex;flex-direction:column;
+    position:relative;
+  }
+
+  /* ── FIXED HEADER ── */
+  .header{
+    position:fixed;top:0;left:50%;
+    transform:translateX(-50%);
+    width:100%;max-width:480px;
+    background:rgba(247,246,255,0.94);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    z-index:200;
+    padding-top:env(safe-area-inset-top,0px);
+    border-bottom:1px solid rgba(237,233,254,0.8);
+  }
+
+  .header-row{
+    display:flex;align-items:center;
+    height:56px;padding:0 16px;
+    position:relative;
+  }
+
+  .back-btn{
+    width:40px;height:40px;
+    background:none;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:12px;color:var(--text-1);
+    transition:background 0.2s;flex-shrink:0;
+  }
+  .back-btn:active{background:var(--surface-2);}
+  .back-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+
+  .header-title{
+    position:absolute;left:50%;transform:translateX(-50%);
+    font-family:'Sora',sans-serif;font-size:17px;font-weight:600;
+    color:var(--text-1);white-space:nowrap;
+  }
+
+  .step-label{
+    margin-left:auto;
+    font-size:12px;color:var(--text-3);white-space:nowrap;
+  }
+
+  /* Progress bar */
+  .progress-track{
+    height:5px;background:var(--surface-2);
+    position:relative;overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--gradient);
+    border-radius:0 3px 3px 0;
+    transition:width 0.5s cubic-bezier(0.34,1.2,0.64,1);
+    width:20%;
+  }
+
+  /* ── SCROLL AREA ── */
+  .scroll-area{
+    flex:1;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-top:calc(env(safe-area-inset-top,0px) + 76px);
+    padding-bottom:calc(env(safe-area-inset-bottom,0px) + 40px);
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-head{
+    padding:24px 24px 8px;
+    animation:fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(14px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .page-title{
+    font-family:'Sora',sans-serif;font-size:22px;font-weight:700;
+    color:var(--text-1);line-height:1.3;margin-bottom:6px;
+  }
+  .page-sub{font-size:14px;color:var(--text-3);line-height:1.5;}
+
+  /* ── CARDS ── */
+  .card{
+    margin:16px 20px 0;
+    background:var(--white);
+    border-radius:var(--radius-xl);
+    padding:20px;
+    border:1px solid #F0EFFE;
+    box-shadow:var(--shadow-sm);
+    display:flex;flex-direction:column;gap:16px;
+    animation:fadeUp 0.4s ease both;
+  }
+  .card:nth-child(2){animation-delay:0.05s;}
+  .card:nth-child(3){animation-delay:0.10s;}
+  .card:nth-child(4){animation-delay:0.15s;}
+  .card:nth-child(5){animation-delay:0.20s;}
+
+  .card-label{
+    font-family:'Sora',sans-serif;font-size:13px;font-weight:600;
+    color:var(--primary);letter-spacing:0.04em;text-transform:uppercase;
+    display:flex;align-items:center;gap:8px;
+  }
+  .card-label svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* ── INPUT ── */
+  .input-group{display:flex;flex-direction:column;gap:6px;}
+
+  .input-label{
+    font-size:13px;font-weight:500;color:var(--text-2);
+    display:flex;align-items:center;gap:6px;
+  }
+  .req{color:var(--error);font-size:12px;}
+
+  .input-wrap{position:relative;display:flex;align-items:center;}
+
+  .input-icon{
+    position:absolute;left:14px;z-index:1;
+    width:17px;height:17px;color:var(--secondary);pointer-events:none;
+  }
+  .input-icon svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+  .field-input{
+    width:100%;height:50px;
+    background:#FAFAFA;
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-md);
+    padding:0 14px 0 42px;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
+    color:var(--text-1);outline:none;
+    transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;
+    -webkit-appearance:none;
+  }
+  .field-input::placeholder{color:var(--text-4);font-weight:400;font-size:14px;}
+  .field-input:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 3px rgba(91,91,219,0.09);}
+  .field-input.no-icon{padding-left:14px;}
+  .field-input.error{border-color:var(--error);background:#FFF8F8;}
+  .field-input.error:focus{box-shadow:0 0 0 3px rgba(239,68,68,0.09);}
+
+  /* Select / Dropdown */
+  .field-select{
+    width:100%;height:50px;
+    background:#FAFAFA;
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-md);
+    padding:0 36px 0 42px;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
+    color:var(--text-1);outline:none;
+    -webkit-appearance:none;appearance:none;
+    cursor:pointer;
+    transition:border-color 0.2s,box-shadow 0.2s;
+  }
+  .field-select:focus{border-color:var(--primary);background:var(--white);box-shadow:0 0 0 3px rgba(91,91,219,0.09);}
+  .field-select.error{border-color:var(--error);}
+  .field-select.no-icon{padding-left:14px;}
+
+  /* Chevron for selects */
+  .select-chevron{
+    position:absolute;right:13px;
+    width:16px;height:16px;pointer-events:none;
+    color:var(--text-4);
+  }
+  .select-chevron svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* Error msg */
+  .err-msg{
+    display:none;align-items:center;gap:5px;
+    font-size:12px;color:var(--error);padding-left:2px;
+  }
+  .err-msg.show{display:flex;}
+  .err-msg svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+  /* Optional tag */
+  .optional{font-size:11px;color:var(--text-4);font-weight:400;margin-left:4px;}
+
+  /* ── GPS BADGE ── */
+  .gps-badge{
+    display:none;align-items:center;gap:6px;
+    background:var(--surface-2);
+    border-radius:var(--radius-full);
+    padding:6px 12px;font-size:12px;font-weight:500;
+    color:var(--primary);width:fit-content;
+    animation:fadeUp 0.3s ease;
+  }
+  .gps-badge.show{display:flex;}
+  .gps-badge svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* ── CLASS CHIPS ── */
+  .chips-scroll{
+    display:flex;gap:8px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:2px 0 6px;
+    scrollbar-width:none;
+  }
+  .chips-scroll::-webkit-scrollbar{display:none;}
+
+  .chip{
+    flex-shrink:0;
+    height:38px;padding:0 18px;
+    border-radius:var(--radius-full);
+    border:1.5px solid var(--border);
+    background:var(--white);
+    font-family:'DM Sans',sans-serif;
+    font-size:14px;font-weight:500;color:var(--text-1);
+    cursor:pointer;white-space:nowrap;
+    transition:all 0.22s cubic-bezier(0.34,1.2,0.64,1);
+    display:flex;align-items:center;justify-content:center;
+    user-select:none;
+  }
+  .chip.active{
+    background:var(--primary);color:white;
+    border-color:var(--primary);
+    box-shadow:0 3px 12px rgba(91,91,219,0.28);
+    transform:scale(1.04);
+  }
+  .chip:active{transform:scale(0.96);}
+
+  /* ── STREAM GRID ── */
+  .stream-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  }
+  .stream-card{
+    border:1.5px solid var(--border);
+    border-radius:14px;
+    padding:12px 8px;
+    background:var(--white);
+    cursor:pointer;
+    display:flex;flex-direction:column;
+    align-items:center;gap:6px;
+    font-family:'DM Sans',sans-serif;
+    font-size:12px;font-weight:500;
+    color:var(--text-1);text-align:center;
+    line-height:1.3;
+    transition:all 0.22s cubic-bezier(0.34,1.2,0.64,1);
+    user-select:none;
+  }
+  .stream-card svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .stream-card.active{
+    background:var(--primary);color:white;
+    border-color:var(--primary);
+    box-shadow:0 3px 14px rgba(91,91,219,0.25);
+    transform:scale(1.03);
+  }
+  .stream-card.active svg{stroke:white;}
+  .stream-card:active{transform:scale(0.96);}
+
+  /* Stream row — hidden until class 11+ */
+  .stream-section{display:none;}
+  .stream-section.show{display:flex;flex-direction:column;gap:8px;}
+
+  /* ── STUDENT TYPE CARDS ── */
+  .type-row{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  }
+  .type-card{
+    border:1.5px solid var(--border);
+    border-radius:16px;
+    padding:16px 8px 14px;
+    background:var(--white);
+    cursor:pointer;
+    display:flex;flex-direction:column;
+    align-items:center;gap:8px;
+    font-family:'DM Sans',sans-serif;
+    font-size:13px;font-weight:500;
+    color:var(--text-1);
+    transition:all 0.25s cubic-bezier(0.34,1.2,0.64,1);
+    user-select:none;position:relative;overflow:hidden;
+  }
+  .type-card svg{
+    width:26px;height:26px;stroke:var(--secondary);fill:none;
+    stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+    transition:stroke 0.2s;
+  }
+  .type-card.active{
+    background:var(--gradient);
+    color:white;border-color:transparent;
+    box-shadow:0 4px 18px rgba(91,91,219,0.32);
+    transform:scale(1.04);
+  }
+  .type-card.active svg{stroke:white;}
+  .type-card.active::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,0.14) 0%,transparent 55%);
+  }
+  .type-card:active{transform:scale(0.96);}
+  .type-card .type-emoji{font-size:22px;line-height:1;}
+
+  /* ── LOCATION NOTE BANNER ── */
+  .location-note{
+    margin:16px 20px 0;
+    background:var(--surface-2);
+    border-radius:14px;padding:13px 16px;
+    display:flex;align-items:flex-start;gap:10px;
+    animation:fadeUp 0.4s ease 0.22s both;
+  }
+  .location-note svg{width:16px;height:16px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px;}
+  .location-note span{font-size:13px;color:var(--primary);line-height:1.5;font-weight:400;}
+
+  /* ── SUBMIT BUTTON ── */
+  .submit-wrap{
+    padding:20px 20px 0;
+    animation:fadeUp 0.4s ease 0.25s both;
+  }
+
+  .btn-submit{
+    width:100%;height:56px;
+    border:none;border-radius:var(--radius-md);
+    background:var(--gradient);color:var(--white);
+    font-family:'Sora',sans-serif;font-size:16px;font-weight:600;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+    box-shadow:0 4px 18px rgba(91,91,219,0.30);
+    transition:transform 0.18s,box-shadow 0.18s,opacity 0.2s;
+    position:relative;overflow:hidden;-webkit-appearance:none;
+  }
+  .btn-submit::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,0.14) 0%,transparent 55%);
+    border-radius:inherit;
+  }
+  .btn-submit:active:not(:disabled){transform:scale(0.97);}
+  .btn-submit:disabled{opacity:0.45;cursor:not-allowed;}
+  .btn-submit.loading{opacity:0.75;pointer-events:none;}
+  .btn-submit.loading .btn-label{display:none;}
+  .btn-submit.loading .loading-wrap{display:flex;}
+  .loading-wrap{
+    display:none;align-items:center;gap:8px;
+    font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
+  }
+
+  .dots-loading{display:flex;gap:4px;}
+  .dots-loading span{
+    width:6px;height:6px;border-radius:50%;background:white;
+    animation:dotBounce 1s ease-in-out infinite;
+  }
+  .dots-loading span:nth-child(2){animation-delay:0.15s;}
+  .dots-loading span:nth-child(3){animation-delay:0.30s;}
+  @keyframes dotBounce{0%,80%,100%{transform:scale(0.6);opacity:0.5;}40%{transform:scale(1);opacity:1;}}
+
+  /* ── TOAST ── */
+  .toast{
+    position:fixed;
+    top:calc(env(safe-area-inset-top,0px)+16px);
+    left:50%;transform:translateX(-50%) translateY(-90px);
+    z-index:999;
+    display:flex;align-items:center;gap:10px;
+    padding:12px 20px;border-radius:var(--radius-full);
+    font-size:14px;font-weight:500;white-space:nowrap;
+    box-shadow:0 4px 20px rgba(0,0,0,0.12);
+    transition:transform 0.4s cubic-bezier(0.34,1.4,0.64,1);
+    pointer-events:none;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .toast.success{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;}
+  .toast.error{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;}
+  .toast.info{background:var(--surface-2);color:var(--primary);border:1px solid var(--accent);}
+  .toast svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+  /* ── SUCCESS SCREEN ── */
+  .success-overlay{
+    position:fixed;inset:0;
+    background:var(--gradient);
+    z-index:1000;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:14px;
+    opacity:0;pointer-events:none;
+    transition:opacity 0.4s ease;
+  }
+  .success-overlay.show{opacity:1;pointer-events:all;}
+  .success-icon{
+    width:80px;height:80px;border-radius:50%;
+    background:rgba(255,255,255,0.2);
+    display:flex;align-items:center;justify-content:center;
+    animation:popIn 0.5s cubic-bezier(0.34,1.6,0.64,1);
+  }
+  .success-icon svg{width:38px;height:38px;stroke:white;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+  @keyframes popIn{from{transform:scale(0.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .success-title{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;color:white;animation:popIn 0.5s ease 0.1s both;}
+  .success-sub{font-size:15px;color:rgba(255,255,255,0.8);animation:popIn 0.5s ease 0.18s both;}
+
+  /* Autocomplete dropdown */
+  .autocomplete-list{
+    position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:100;
+    background:var(--white);border-radius:14px;
+    border:1px solid var(--border);
+    box-shadow:0 8px 24px rgba(91,91,219,0.12);
+    overflow:hidden;display:none;
+  }
+  .autocomplete-list.show{display:block;}
+  .autocomplete-item{
+    padding:12px 16px;font-size:14px;color:var(--text-1);
+    cursor:pointer;transition:background 0.15s;
+  }
+  .autocomplete-item:hover,.autocomplete-item:active{background:var(--surface-2);}
+
+  /* Relative wrapper for autocomplete */
+  .rel{position:relative;}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg id="toastIcon" viewBox="0 0 24 24"></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <div class="success-title">You're all set!</div>
+  <div class="success-sub">Taking you to Twinkle...</div>
+</div>
+
+<div class="app">
+
+  <!-- FIXED HEADER -->
+  <div class="header">
+    <div class="header-row">
+      <button class="back-btn" onclick="history.back()" aria-label="Back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="header-title">Academic Profile</span>
+      <span class="step-label" id="stepLabel">Step 1 of 2</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- SCROLLABLE FORM -->
+  <div class="scroll-area" id="scrollArea">
+
+    <div class="page-head">
+      <div class="page-title">Tell us about yourself</div>
+      <div class="page-sub">This helps us personalize your entire experience</div>
+    </div>
+
+    <!-- ═══ CARD 1 — Personal Info ═══ -->
+    <div class="card" id="card1">
+      <div class="card-label">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Personal Info
+      </div>
+
+      <!-- Full Name -->
+      <div class="input-group">
+        <div class="input-label">Full Name <span class="req">*</span></div>
+        <div class="input-wrap">
+          <span class="input-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <input type="text" class="field-input" id="nameInput" placeholder="Your full name"
+                 autocomplete="name" oninput="onField(); clearErr('nameInput','nameErr')">
+        </div>
+        <div class="err-msg" id="nameErr">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Name is required</span>
+        </div>
+      </div>
+
+      <!-- Nickname -->
+      <div class="input-group">
+        <div class="input-label">Nickname <span class="optional">(optional)</span></div>
+        <div class="input-wrap">
+          <span class="input-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <input type="text" class="field-input" id="nicknameInput" placeholder="What do friends call you?" oninput="onField()">
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CARD 2 — Location ═══ -->
+    <div class="card" id="card2">
+      <div class="card-label">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Location
+      </div>
+
+      <!-- Country -->
+      <div class="input-group">
+        <div class="input-label">Country <span class="req">*</span></div>
+        <div class="input-wrap">
+          <span class="input-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+          <select class="field-select" id="countrySelect" onchange="onCountryChange(); onField()">
+            <option value="">Select country</option>
+            <option value="India" selected>🇮🇳 India</option>
+            <option value="Bangladesh">🇧🇩 Bangladesh</option>
+            <option value="Nepal">🇳🇵 Nepal</option>
+            <option value="Sri Lanka">🇱🇰 Sri Lanka</option>
+            <option value="Pakistan">🇵🇰 Pakistan</option>
+            <option value="Other">🌍 Other</option>
+          </select>
+          <span class="select-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </div>
+        <div class="err-msg" id="countryErr">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Please select your country</span>
+        </div>
+      </div>
+
+      <!-- State -->
+      <div class="input-group">
+        <div class="input-label">State / Province <span class="req">*</span></div>
+        <div class="input-wrap">
+          <span class="input-icon"><svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>
+          <select class="field-select" id="stateSelect" onchange="onStateChange(); onField()">
+            <option value="">Select state</option>
+          </select>
+          <span class="select-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </div>
+        <div class="err-msg" id="stateErr">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Please select your state</span>
+        </div>
+      </div>
+
+      <!-- City -->
+      <div class="input-group">
+        <div class="input-label">City <span class="optional">(optional)</span></div>
+        <div class="gps-badge" id="gpsBadge">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Using your location
+        </div>
+        <div class="input-wrap rel">
+          <span class="input-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <input type="text" class="field-input" id="cityInput" placeholder="Your city"
+                 autocomplete="off" oninput="onCityInput(this.value); onField()">
+          <div class="autocomplete-list" id="cityAutocomplete"></div>
+        </div>
+      </div>
+
+      <!-- GPS button -->
+      <button type="button" onclick="requestGPS()" id="gpsBtn"
+        style="display:flex;align-items:center;gap:8px;background:var(--surface-2);border:none;border-radius:12px;padding:10px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--primary);width:fit-content;transition:background 0.2s;">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        Auto-detect my location
+      </button>
+    </div>
+
+    <!-- ═══ CARD 3 — Academic Details ═══ -->
+    <div class="card" id="card3">
+      <div class="card-label">
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Academic Details
+      </div>
+
+      <!-- Class/Grade chips -->
+      <div class="input-group">
+        <div class="input-label">Class / Grade <span class="req">*</span></div>
+        <div class="chips-scroll" id="classChips">
+          <div class="chip" data-val="6"  onclick="selectClass(this)">Class 6</div>
+          <div class="chip" data-val="7"  onclick="selectClass(this)">Class 7</div>
+          <div class="chip" data-val="8"  onclick="selectClass(this)">Class 8</div>
+          <div class="chip" data-val="9"  onclick="selectClass(this)">Class 9</div>
+          <div class="chip" data-val="10" onclick="selectClass(this)">Class 10</div>
+          <div class="chip" data-val="11" onclick="selectClass(this)">Class 11</div>
+          <div class="chip" data-val="12" onclick="selectClass(this)">Class 12</div>
+          <div class="chip" data-val="Graduation" onclick="selectClass(this)">Graduation</div>
+          <div class="chip" data-val="Post-Grad"  onclick="selectClass(this)">Post-Grad</div>
+        </div>
+        <div class="err-msg" id="classErr">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Please select your class</span>
+        </div>
+      </div>
+
+      <!-- Stream — shown for class 11+ -->
+      <div class="input-group stream-section" id="streamSection">
+        <div class="input-label">Stream <span class="req">*</span></div>
+        <div class="stream-grid" id="streamGrid">
+          <div class="stream-card" data-val="Science (PCM)" onclick="selectStream(this)">
+            <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+            Science<br><span style="font-size:10px;opacity:0.75;">PCM</span>
+          </div>
+          <div class="stream-card" data-val="Science (PCB)" onclick="selectStream(this)">
+            <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+            Science<br><span style="font-size:10px;opacity:0.75;">PCB</span>
+          </div>
+          <div class="stream-card" data-val="Commerce" onclick="selectStream(this)">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Commerce
+          </div>
+          <div class="stream-card" data-val="Arts/Humanities" onclick="selectStream(this)">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Arts
+          </div>
+          <div class="stream-card" data-val="Vocational" onclick="selectStream(this)">
+            <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            Vocational
+          </div>
+        </div>
+        <div class="err-msg" id="streamErr">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Please select your stream</span>
+        </div>
+      </div>
+
+      <!-- Board -->
+      <div class="input-group">
+        <div class="input-label">Board / Examination <span class="req">*</span></div>
+        <div class="input-wrap">
+          <span class="input-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+          <select class="field-select" id="boardSelect" onchange="onField(); clearErr('boardSelect','boardErr')">
+            <option value="">Select board</option>
+            <optgroup label="National Boards">
+              <option value="CBSE">CBSE — Central Board of Secondary Education</option>
+              <option value="ICSE">ICSE — Indian Certificate of Secondary Education</option>
+              <option value="CISCE">CISCE</option>
+              <option value="NIOS">NIOS — National Institute of Open Schooling</option>
+              <option value="IB">IB — International Baccalaureate</option>
+              <option value="IGCSE">IGCSE — Cambridge</option>
+            </optgroup>
+            <optgroup label="Northeast India">
+              <option value="SEBA">SEBA — Assam (HSLC)</option>
+              <option value="AHSEC">AHSEC — Assam (HSSLC)</option>
+              <option value="TBSE">TBSE — Tripura</option>
+              <option value="MBSE">MBSE — Mizoram</option>
+              <option value="NBSE">NBSE — Nagaland</option>
+              <option value="BOSEM">BOSEM — Manipur</option>
+              <option value="KOHIMA">Kohima Board</option>
+            </optgroup>
+            <optgroup label="North India">
+              <option value="CBSE">CBSE</option>
+              <option value="BSER">BSER — Rajasthan</option>
+              <option value="RBSE">RBSE — Rajasthan</option>
+              <option value="HPBOSE">HPBOSE — Himachal Pradesh</option>
+              <option value="PSEB">PSEB — Punjab</option>
+              <option value="JAC">JAC — Jharkhand</option>
+              <option value="BSEB">BSEB — Bihar</option>
+              <option value="UPMSP">UPMSP — Uttar Pradesh</option>
+              <option value="UBSE">UBSE — Uttarakhand</option>
+            </optgroup>
+            <optgroup label="East India">
+              <option value="WBBSE">WBBSE — West Bengal (Secondary)</option>
+              <option value="WBCHSE">WBCHSE — West Bengal (Higher Secondary)</option>
+              <option value="BSE Odisha">BSE Odisha</option>
+              <option value="CHSE Odisha">CHSE Odisha</option>
+            </optgroup>
+            <optgroup label="South India">
+              <option value="TN Board">TN Board — Tamil Nadu</option>
+              <option value="AP Board">AP Board — Andhra Pradesh</option>
+              <option value="TS Board">TS Board — Telangana</option>
+              <option value="Karnataka Board">Karnataka Board</option>
+              <option value="Kerala Board">Kerala Board</option>
+            </optgroup>
+            <optgroup label="West India">
+              <option value="MSBSHSE">MSBSHSE — Maharashtra</option>
+              <option value="GSEB">GSEB — Gujarat</option>
+              <option value="GBSE">GBSE — Goa</option>
+            </optgroup>
+            <optgroup label="Central India">
+              <option value="MPBSE">MPBSE — Madhya Pradesh</option>
+              <option value="CGBSE">CGBSE — Chhattisgarh</option>
+            </optgroup>
+          </select>
+          <span class="select-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </div>
+        <div class="err-msg" id="boardErr">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Please select your board</span>
+        </div>
+      </div>
+
+      <!-- Medium -->
+      <div class="input-group">
+        <div class="input-label">Medium of Instruction <span class="req">*</span></div>
+        <div class="input-wrap">
+          <span class="input-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <select class="field-select" id="mediumSelect" onchange="onField(); clearErr('mediumSelect','mediumErr')">
+            <option value="">Select medium</option>
+            <option value="English">English</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Assamese">Assamese</option>
+            <option value="Bengali">Bengali</option>
+            <option value="Telugu">Telugu</option>
+            <option value="Marathi">Marathi</option>
+            <option value="Tamil">Tamil</option>
+            <option value="Urdu">Urdu</option>
+            <option value="Gujarati">Gujarati</option>
+            <option value="Kannada">Kannada</option>
+            <option value="Malayalam">Malayalam</option>
+            <option value="Odia">Odia</option>
+            <option value="Punjabi">Punjabi</option>
+            <option value="Maithili">Maithili</option>
+            <option value="Sanskrit">Sanskrit</option>
+            <option value="Bodo">Bodo</option>
+            <option value="Dogri">Dogri</option>
+            <option value="Santali">Santali</option>
+          </select>
+          <span class="select-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </div>
+        <div class="err-msg" id="mediumErr">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Please select your medium</span>
+        </div>
+      </div>
+
+      <!-- School Name -->
+      <div class="input-group">
+        <div class="input-label">School / College Name <span class="optional">(optional)</span></div>
+        <div class="input-wrap rel">
+          <span class="input-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+          <input type="text" class="field-input" id="schoolInput" placeholder="Name of your school or college"
+                 autocomplete="off" oninput="onSchoolInput(this.value); onField()">
+          <div class="autocomplete-list" id="schoolAutocomplete"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CARD 4 — Student Identity ═══ -->
+    <div class="card" id="card4">
+      <div class="card-label">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Student Identity
+      </div>
+      <div class="input-label">Who are you as a student? <span class="req">*</span></div>
+      <div class="type-row">
+        <div class="type-card" data-val="Average" onclick="selectType(this)">
+          <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Average
+        </div>
+        <div class="type-card" data-val="Backbencher" onclick="selectType(this)">
+          <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          Backbencher
+        </div>
+        <div class="type-card" data-val="Topper" onclick="selectType(this)">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Topper
+        </div>
+      </div>
+      <div class="err-msg" id="typeErr">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>Please select your student type</span>
+      </div>
+    </div>
+
+    <!-- LOCATION NOTE -->
+    <div class="location-note">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span>Your location is used to find nearby students and personalize your feed. It is never shared publicly.</span>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-wrap">
+      <button class="btn-submit" id="submitBtn" onclick="submitForm()">
+        <span class="btn-label">Take Me to Twinkle ✦</span>
+        <div class="loading-wrap">
+          Setting up your profile
+          <div class="dots-loading"><span></span><span></span><span></span></div>
+        </div>
+      </button>
+    </div>
+
+  </div><!-- /scroll-area -->
+</div><!-- /app -->
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, doc, setDoc, updateDoc, getDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDIAPr5dXMoWsgHNMGON1RG6rhxi1ccQUw",
+    authDomain: "twinkle-7dd5f.firebaseapp.com",
+    databaseURL: "https://twinkle-7dd5f-default-rtdb.firebaseio.com",
+    projectId: "twinkle-7dd5f",
+    storageBucket: "twinkle-7dd5f.firebasestorage.app",
+    messagingSenderId: "584206668657",
+    appId: "1:584206668657:web:3bbb1ae83ecd892b50dcd0",
+    measurementId: "G-GS6XV7D1D8"
+  };
+
+  const fbApp = initializeApp(firebaseConfig);
+  const auth  = getAuth(fbApp);
+  const db    = getFirestore(fbApp);
+
+  let currentUser = null;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
+
+    // Check if already completed → redirect
+    const snap = await getDoc(doc(db,"users",user.uid));
+    if (snap.exists() && snap.data().academicProfileComplete) {
+      window.location.href = 'feed.html'; return;
+    }
+
+    // Pre-fill name from auth
+    if (user.displayName) {
+      const ni = document.getElementById('nameInput');
+      if (!ni.value) ni.value = user.displayName;
+    }
+
+    // Restore auto-saved draft
+    restoreDraft();
+    updateProgress();
+  });
+
+  /* ── SUBMIT ── */
+  window.submitForm = async function() {
+    if (!validateForm()) return;
+    if (!currentUser) { showToast('error','Session expired. Please log in again.'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.classList.add('loading'); btn.disabled = true;
+
+    const formData = collectForm();
+
+    try {
+      await setDoc(doc(db,"users",currentUser.uid), {
+        ...formData,
+        academicProfileComplete: true,
+        profileCompletedAt: serverTimestamp(),
+        // Algorithm data
+        algorithmData: {
+          classNum:    formData.classGrade,
+          board:       formData.board,
+          medium:      formData.medium,
+          stream:      formData.stream || null,
+          state:       formData.state,
+          country:     formData.country,
+          studentType: formData.studentType,
+          location:    formData.location || null,
+        }
+      }, { merge: true });
+      localStorage.removeItem('twinkle_profile_draft');
+
+      // Show success
+      document.getElementById('successOverlay').classList.add('show');
+      setTimeout(() => { window.location.href = 'feed.html'; }, 1400);
+
+    } catch(err) {
+      btn.classList.remove('loading'); btn.disabled = false;
+      showToast('error','Failed to save. Please try again.');
+      console.error(err);
+    }
+  };
+
+  function collectForm() {
+    return {
+      displayName:   document.getElementById('nameInput').value.trim(),
+      nickname:      document.getElementById('nicknameInput').value.trim(),
+      country:       document.getElementById('countrySelect').value,
+      state:         document.getElementById('stateSelect').value,
+      city:          document.getElementById('cityInput').value.trim(),
+      classGrade:    window._selectedClass || '',
+      stream:        window._selectedStream || '',
+      board:         document.getElementById('boardSelect').value,
+      medium:        document.getElementById('mediumSelect').value,
+      schoolName:    document.getElementById('schoolInput').value.trim(),
+      studentType:   window._selectedType || '',
+      location:      window._gpsLocation || null,
+    };
+  }
+
+  /* ── VALIDATION ── */
+  window.validateForm = function() {
+    let ok = true;
+    const name = document.getElementById('nameInput').value.trim();
+    if (!name) { showErr('nameInput','nameErr','Your name is required'); ok=false; }
+
+    const country = document.getElementById('countrySelect').value;
+    if (!country) { showErr('countrySelect','countryErr','Please select your country'); ok=false; }
+
+    const state = document.getElementById('stateSelect').value;
+    if (!state) { showErr('stateSelect','stateErr','Please select your state'); ok=false; }
+
+    if (!window._selectedClass) { document.getElementById('classErr').classList.add('show'); ok=false; }
+
+    const needsStream = ['11','12','Graduation','Post-Grad'].includes(window._selectedClass);
+    if (needsStream && !window._selectedStream) { document.getElementById('streamErr').classList.add('show'); ok=false; }
+
+    const board = document.getElementById('boardSelect').value;
+    if (!board) { showErr('boardSelect','boardErr','Please select your board'); ok=false; }
+
+    const medium = document.getElementById('mediumSelect').value;
+    if (!medium) { showErr('mediumSelect','mediumErr','Please select your medium'); ok=false; }
+
+    if (!window._selectedType) { document.getElementById('typeErr').classList.add('show'); ok=false; }
+
+    if (!ok) {
+      // Scroll to first error
+      const firstErr = document.querySelector('.err-msg.show');
+      if (firstErr) firstErr.scrollIntoView({ behavior:'smooth', block:'center' });
+      showToast('error','Please fill in all required fields');
+    }
+    return ok;
+  };
+
+  function showErr(inputId, errId, msg) {
+    const inp = document.getElementById(inputId);
+    if (inp) inp.classList.add('error');
+    const err = document.getElementById(errId);
+    if (err) { err.querySelector('span') && (err.querySelector('span').textContent = msg); err.classList.add('show'); }
+  }
+
+  /* ── AUTO SAVE DRAFT ── */
+  window.saveDraft = function() {
+    const data = collectForm();
+    data._class  = window._selectedClass;
+    data._stream = window._selectedStream;
+    data._type   = window._selectedType;
+    localStorage.setItem('twinkle_profile_draft', JSON.stringify(data));
+  };
+
+  function restoreDraft() {
+    try {
+      const raw = localStorage.getItem('twinkle_profile_draft');
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (d.displayName)   document.getElementById('nameInput').value     = d.displayName;
+      if (d.nickname)      document.getElementById('nicknameInput').value  = d.nickname;
+      if (d.country)       { document.getElementById('countrySelect').value = d.country; onCountryChange(); }
+      if (d.state)         document.getElementById('stateSelect').value    = d.state;
+      if (d.city)          document.getElementById('cityInput').value      = d.city;
+      if (d.board)         document.getElementById('boardSelect').value    = d.board;
+      if (d.medium)        document.getElementById('mediumSelect').value   = d.medium;
+      if (d.schoolName)    document.getElementById('schoolInput').value    = d.schoolName;
+      if (d._class) {
+        const chip = document.querySelector(`.chip[data-val="${d._class}"]`);
+        if (chip) selectClass(chip);
+      }
+      if (d._type) {
+        const tc = document.querySelector(`.type-card[data-val="${d._type}"]`);
+        if (tc) selectType(tc);
+      }
+    } catch(e) {}
+  }
+
+  function showToast(type, msg) {
+    const t=document.getElementById('toast');
+    document.getElementById('toastMsg').textContent=msg;
+    document.getElementById('toastIcon').innerHTML = type==='success'
+      ? '<polyline points="20 6 9 17 4 12"/>'
+      : type==='info'
+      ? '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'
+      : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+    t.className=`toast ${type}`;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t=setTimeout(()=>t.classList.remove('show'),3200);
+  }
+  window.showToast = showToast;
+</script>
+
+<script>
+  /* ============================================================
+     STATE
+  ============================================================ */
+  window._selectedClass  = '';
+  window._selectedStream = '';
+  window._selectedType   = '';
+  window._gpsLocation    = null;
+
+  /* ── Progress ── */
+  const FIELDS = ['nameInput','countrySelect','stateSelect','boardSelect','mediumSelect'];
+  function updateProgress() {
+    let filled = 0;
+    const total = 7; // name, country, state, class, board, medium, type
+    if (document.getElementById('nameInput').value.trim())      filled++;
+    if (document.getElementById('countrySelect').value)         filled++;
+    if (document.getElementById('stateSelect').value)           filled++;
+    if (window._selectedClass)                                   filled++;
+    if (document.getElementById('boardSelect').value)           filled++;
+    if (document.getElementById('mediumSelect').value)          filled++;
+    if (window._selectedType)                                    filled++;
+
+    const pct = Math.round((filled / total) * 100);
+    document.getElementById('progressFill').style.width = Math.max(8, pct) + '%';
+
+    const step = filled < 4 ? 'Step 1 of 2 — Basics' : 'Step 2 of 2 — About You';
+    document.getElementById('stepLabel').textContent = step;
+  }
+
+  function onField() {
+    updateProgress();
+    if (window.saveDraft) window.saveDraft();
+  }
+  window.onField = onField;
+
+  /* ── Class chip select ── */
+  function selectClass(el) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    window._selectedClass = el.dataset.val;
+
+    // Show/hide stream
+    const needsStream = ['11','12','Graduation','Post-Grad'].includes(window._selectedClass);
+    const sec = document.getElementById('streamSection');
+    if (needsStream) { sec.classList.add('show'); }
+    else             { sec.classList.remove('show'); window._selectedStream = ''; document.querySelectorAll('.stream-card').forEach(s=>s.classList.remove('active')); }
+
+    document.getElementById('classErr').classList.remove('show');
+    onField();
+  }
+  window.selectClass = selectClass;
+
+  /* ── Stream select ── */
+  function selectStream(el) {
+    document.querySelectorAll('.stream-card').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    window._selectedStream = el.dataset.val;
+    document.getElementById('streamErr').classList.remove('show');
+    onField();
+  }
+  window.selectStream = selectStream;
+
+  /* ── Student type select ── */
+  function selectType(el) {
+    document.querySelectorAll('.type-card').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    window._selectedType = el.dataset.val;
+    document.getElementById('typeErr').classList.remove('show');
+    onField();
+  }
+  window.selectType = selectType;
+
+  /* ── Clear error ── */
+  function clearErr(inputId, errId) {
+    const inp = document.getElementById(inputId);
+    if (inp) inp.classList.remove('error');
+    const err = document.getElementById(errId);
+    if (err) err.classList.remove('show');
+  }
+  window.clearErr = clearErr;
+
+  /* ── Country → State population ── */
+  const INDIA_STATES = [
+    'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh',
+    'Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka',
+    'Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram',
+    'Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana',
+    'Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
+    'Andaman & Nicobar Islands','Chandigarh','Dadra & Nagar Haveli',
+    'Daman & Diu','Delhi','Jammu & Kashmir','Ladakh','Lakshadweep','Puducherry'
+  ];
+
+  const OTHER_STATES = {
+    'Bangladesh':['Dhaka','Chittagong','Rajshahi','Khulna','Sylhet','Barisal'],
+    'Nepal':['Bagmati','Gandaki','Lumbini','Koshi','Madhesh'],
+    'Sri Lanka':['Western','Central','Southern','Northern','Eastern'],
+    'Pakistan':['Punjab','Sindh','Khyber Pakhtunkhwa','Balochistan','Islamabad'],
+  };
+
+  function onCountryChange() {
+    const country = document.getElementById('countrySelect').value;
+    const sel = document.getElementById('stateSelect');
+    sel.innerHTML = '<option value="">Select state / province</option>';
+
+    const states = country === 'India' ? INDIA_STATES : (OTHER_STATES[country] || []);
+    states.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s; o.textContent = s;
+      sel.appendChild(o);
+    });
+    clearErr('countrySelect','countryErr');
+    clearErr('stateSelect','stateErr');
+  }
+  window.onCountryChange = onCountryChange;
+
+  function onStateChange() {
+    clearErr('stateSelect','stateErr');
+  }
+  window.onStateChange = onStateChange;
+
+  // Populate India by default on load
+  onCountryChange();
+
+  /* ── GPS Location ── */
+  function requestGPS() {
+    const btn = document.getElementById('gpsBtn');
+    btn.style.opacity = '0.6';
+    btn.style.pointerEvents = 'none';
+
+    if (!navigator.geolocation) {
+      showToast('error','Geolocation not supported by your browser');
+      btn.style.opacity='1'; btn.style.pointerEvents='all'; return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        window._gpsLocation = { lat: latitude, lng: longitude };
+        document.getElementById('gpsBadge').classList.add('show');
+
+        // Reverse geocode via free API
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
+          const data = await res.json();
+          const city  = data.address?.city || data.address?.town || data.address?.village || '';
+          const state = data.address?.state || '';
+          if (city) document.getElementById('cityInput').value = city;
+          if (state) {
+            const sel = document.getElementById('stateSelect');
+            for (let opt of sel.options) {
+              if (opt.text.toLowerCase().includes(state.toLowerCase().substring(0,5))) {
+                sel.value = opt.value; break;
+              }
+            }
+          }
+          showToast('success','Location detected!');
+        } catch {
+          showToast('info','Location noted. City/state fill in manually.');
+        }
+
+        btn.style.opacity='1'; btn.style.pointerEvents='all';
+        btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--success);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;"><polyline points="20 6 9 17 4 12"/></svg> <span style="color:var(--success);">Location detected</span>`;
+        onField();
+      },
+      () => {
+        showToast('error','Could not get location. Please fill manually.');
+        btn.style.opacity='1'; btn.style.pointerEvents='all';
+      },
+      { timeout: 8000, maximumAge: 60000 }
+    );
+  }
+  window.requestGPS = requestGPS;
+
+  /* ── City autocomplete (static suggestions based on state) ── */
+  const CITY_SUGGESTIONS = {
+    'Assam':['Guwahati','Dibrugarh','Silchar','Jorhat','Tezpur','Nagaon','Lakhimpur','Tinsukia','Dhubri','Karimganj','Bongaigaon','Bilaspur'],
+    'Maharashtra':['Mumbai','Pune','Nagpur','Nashik','Aurangabad','Solapur'],
+    'Delhi':['New Delhi','Dwarka','Rohini','Saket','Noida','Gurgaon'],
+    'West Bengal':['Kolkata','Siliguri','Durgapur','Howrah','Asansol'],
+    'Tamil Nadu':['Chennai','Coimbatore','Madurai','Tiruchirappalli','Salem'],
+    'Karnataka':['Bengaluru','Mysuru','Hubli','Mangaluru','Belagavi'],
+    'Uttar Pradesh':['Lucknow','Kanpur','Agra','Varanasi','Prayagraj','Noida'],
+    'Bihar':['Patna','Gaya','Muzaffarpur','Bhagalpur'],
+    'Gujarat':['Ahmedabad','Surat','Vadodara','Rajkot'],
+    'Rajasthan':['Jaipur','Jodhpur','Udaipur','Kota','Ajmer'],
+    'default':['Mumbai','Delhi','Bengaluru','Hyderabad','Chennai','Kolkata','Pune','Ahmedabad','Jaipur','Lucknow']
+  };
+
+  function onCityInput(val) {
+    const state = document.getElementById('stateSelect').value;
+    const cities = CITY_SUGGESTIONS[state] || CITY_SUGGESTIONS['default'];
+    const list = document.getElementById('cityAutocomplete');
+
+    if (!val || val.length < 1) { list.classList.remove('show'); return; }
+
+    const matches = cities.filter(c => c.toLowerCase().startsWith(val.toLowerCase())).slice(0,5);
+    if (!matches.length) { list.classList.remove('show'); return; }
+
+    list.innerHTML = matches.map(c =>
+      `<div class="autocomplete-item" onclick="selectCity('${c}')">${c}</div>`
+    ).join('');
+    list.classList.add('show');
+  }
+  window.onCityInput = onCityInput;
+
+  function selectCity(city) {
+    document.getElementById('cityInput').value = city;
+    document.getElementById('cityAutocomplete').classList.remove('show');
+    onField();
+  }
+  window.selectCity = selectCity;
+
+  /* ── School autocomplete ── */
+  const SCHOOL_COMMON = [
+    'Kendriya Vidyalaya','Jawahar Navodaya Vidyalaya','Army Public School',
+    'Delhi Public School','DAV Public School','St. Xavier\'s School',
+    'Ryan International School','Amity International School',
+    'The Assam Valley School','Sainik School','Government Higher Secondary School',
+    'Government Middle School','Model School'
+  ];
+
+  function onSchoolInput(val) {
+    const list = document.getElementById('schoolAutocomplete');
+    if (!val || val.length < 2) { list.classList.remove('show'); return; }
+    const matches = SCHOOL_COMMON.filter(s => s.toLowerCase().includes(val.toLowerCase())).slice(0,5);
+    if (!matches.length) { list.classList.remove('show'); return; }
+    list.innerHTML = matches.map(s =>
+      `<div class="autocomplete-item" onclick="selectSchool('${s.replace(/'/g,"\\\'")}')">${s}</div>`
+    ).join('');
+    list.classList.add('show');
+  }
+  window.onSchoolInput = onSchoolInput;
+
+  function selectSchool(school) {
+    document.getElementById('schoolInput').value = school;
+    document.getElementById('schoolAutocomplete').classList.remove('show');
+    onField();
+  }
+  window.selectSchool = selectSchool;
+
+  // Close autocomplete on outside tap
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.rel')) {
+      document.querySelectorAll('.autocomplete-list').forEach(l => l.classList.remove('show'));
+    }
+  });
+
+  // Initial progress render
+  updateProgress();
+</script>
+</body>
+</html>
